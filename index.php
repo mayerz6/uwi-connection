@@ -1,32 +1,57 @@
 <?php session_start(); ?>
 
+<?php include 'classes/db.php'; ?>
+
 <?php
 
-$dbhost = "localhost"; // this will ususally be 'localhost', but can sometimes differ
-$dbname = "uwi-connection"; // the name of the database that you are going to use for this project
-$dbuser = "mayerz"; // the username that you created, or were given, to access your database
-$dbpass = "M@y3rZT#ch"; // the password that you created, or were given, to access your database
- 
-$con = mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);
-// mysql_connect($dbhost, $dbuser, $dbpass) or die("MySQL Error: " . mysql_error());
-// mysql_select_db($dbname) or die("MySQL Error: " . mysql_error());
+$dbConnect = new database;
 
-// Check connection
-if (mysqli_connect_errno())
-  {
-  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-  }
+if(isset($_POST['submit'])){
 
-// ...some PHP code for database "my_db"...
-   // echo 'Running nigga!';
-       // exit();
-// Change database to "test"
-//mysqli_select_db($con,"test");
+  /*
+  
+      Store INPUT data into unique PHP variables for validating.
 
-// ...some PHP code for database "test"...
+      This "EXTRACT" function provides all these details AUTOMATICALLY
+          $username = $_POST['username'];
+          $pwd = $_POST['password'];
 
-mysqli_close($con);
+    */   
 
+    extract($_POST);
+  
+     /* We MUST sanitize our input fields for SECURITY purposes. */
+        $filteredUsername = filter_var($username, FILTER_SANITIZE_STRING);
+
+        $userData = $dbConnect->fetchUserByUsername($filteredUsername);
+
+        if(!empty($userData)){
+
+          $recordUser = $userConnect->authorizeUser($username, $usrPwd);
+         
+             if(!empty($recordUser)){
+                     
+                                /* Once the User has been authorized we create a set */
+                                /* of SESSION variables to track them during the time */
+                                /* they spend using the Calendar App. */
+
+                                $_SESSION['id'] = $recordUser[0]['id'];
+                                $_SESSION['firstname'] = $recordUser[0]['fname'];
+                                $_SESSION['surname'] = $recordUser[0]['sname'];
+                                $_SESSION['role'] = $recordUser[0]['role'];
+                                $_SESSION['username'] = $recordUser[0]['uname'];
+
+                                header('Location: register.php');
+                                    exit;
+                            } else {
+                                $response_error = "error";
+                            }
+
+
+              }
+
+
+        }
 
 ?>
 
@@ -79,15 +104,15 @@ mysqli_close($con);
   <div class="col-md-6">
 
        <h2 class="text-center">Login Now</h2>
-		    <form class="login-form">
+		    <form class="login-form" method="post">
   <div class="form-group">
-    <label for="exampleInputEmail1" class="text-uppercase">Username</label>
-    <input type="text" name="username" class="form-control" placeholder="">
+    <label for="usr_name" class="text-uppercase">Username</label>
+    <input type="text" id="usr_name" name="username" class="form-control" placeholder="">
     
   </div>
   <div class="form-group">
-    <label for="exampleInputPassword1" class="text-uppercase">Password</label>
-    <input type="password" name="pwd" class="form-control" placeholder="">
+    <label for="usr_pwd" class="text-uppercase">Password</label>
+    <input type="password" id="usr_pwd" name="usrPwd" class="form-control" placeholder="">
   </div>
   
   
@@ -96,7 +121,7 @@ mysqli_close($con);
       <input type="checkbox" class="form-check-input">
       <small>Remember Me</small>
     </label>
-    <button type="submit" class="btn btn-login float-right">Submit</button>
+    <button name="submit" class="btn btn-login float-right">Submit</button>
   </div>
   
 </form>
@@ -110,7 +135,13 @@ mysqli_close($con);
         <footer>&copy; Copyright UWI | All Rights Reservered</footer>
     
     </body>
+
+ 
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
 </html>
