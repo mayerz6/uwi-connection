@@ -1,6 +1,8 @@
 
 div.screen { height: 600px; width: 100%; outline: 1px solid #000000; padding: 10px; margin: 10px 10px; }
-
+.default { display: none; }
+.error { color: red; font-weight: 900; 
+}
 @media screen and (min-width: 921px) {
     div.screen { height: 100%; width: 960px; outline: 1px solid #000000; padding: 10px; margin: 10px auto; }
 }

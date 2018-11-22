@@ -23,11 +23,11 @@ if(isset($_POST['submit'])){
      /* We MUST sanitize our input fields for SECURITY purposes. */
         $filteredUsername = filter_var($username, FILTER_SANITIZE_STRING);
 
-        $userData = $dbConnect->fetchUserByUsername($filteredUsername);
+       $userData = $dbConnect->fetchUserByUsername($filteredUsername);
 
         if(!empty($userData)){
 
-          $recordUser = $userConnect->authorizeUser($username, $usrPwd);
+          $recordUser = $dbConnect->authorizeUser($filteredUsername, $usrPwd);
          
              if(!empty($recordUser)){
                      
@@ -41,7 +41,7 @@ if(isset($_POST['submit'])){
                                 $_SESSION['role'] = $recordUser[0]['role'];
                                 $_SESSION['username'] = $recordUser[0]['uname'];
 
-                                header('Location: register.php');
+                                header('Location: dashboard.php');
                                     exit;
                             } else {
                                 $response_error = "error";
@@ -104,15 +104,16 @@ if(isset($_POST['submit'])){
   <div class="col-md-6">
 
        <h2 class="text-center">Login Now</h2>
-		    <form class="login-form" method="post">
+		    <form action="" onsubmit="return userLogin()" class="login-form" name="loginForm" method="post">
   <div class="form-group">
     <label for="usr_name" class="text-uppercase">Username</label>
     <input type="text" id="usr_name" name="username" class="form-control" placeholder="">
-    
+        <div id="usernameErrorMsg"></div>
   </div>
   <div class="form-group">
     <label for="usr_pwd" class="text-uppercase">Password</label>
     <input type="password" id="usr_pwd" name="usrPwd" class="form-control" placeholder="">
+          <div id="pwdErrorMsg"></div>
   </div>
   
   
@@ -125,6 +126,65 @@ if(isset($_POST['submit'])){
   </div>
   
 </form>
+
+<script type="text/javascript">
+
+/* Grab the textbox fields of the login form */
+
+var username = document.forms["loginForm"]["username"];
+var password = document.forms["loginForm"]["usrPwd"];
+
+/* Grab the hidden/empty DIVs to present error messages */
+var usernameError = document.getElementById("usernameErrorMsg");
+var pwdError = document.getElementById("pwdErrorMsg");
+
+/* Initialize EVENT LISTENERS */
+username.addEventListener("blur", nameVerify, true);
+password.addEventListener("blur", pwdVerify, true);
+
+/* This function DEACTIVATES the error messages showcased once  */
+    /* the INPUT field IS NOT BLANK! */
+    function nameVerify() {
+        if(username.value != ""){
+            username.style.border = "0px solid #ff0000";
+                usernameError.innerHTML = "";
+                    return true;
+        }
+    }
+
+      function pwdVerify(){
+        if(password.value != ""){
+            password.style.border = "0px solid #ff0000";
+                pwdError.innerHTML = "";
+                    return true;
+        }
+    }
+
+function userLogin(){
+
+    if(username.value == ""){
+            username.style.border = "1px solid #ff0000";
+            usernameError.textContent = "Username is required!";
+            usernameError.style.color = "#ff0000";
+                        username.focus();
+                            return false;
+        }
+
+
+         if(password.value == ""){
+            password.style.border = "1px solid #ff0000";
+                pwdError.textContent = "Password is required!";
+                    pwdError.style.color = "#ff0000";
+                        password.focus();
+                            return false;
+        }
+    
+
+}
+
+
+
+</script>
 
   </div>
       

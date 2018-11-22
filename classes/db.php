@@ -39,23 +39,56 @@ public static function registerUser($userInput){
 
       /*    Example of a PREPARED Statements   */
      /* Improved Security */
-     
-    /*
+
     
-     VALUES ("mayerz", "123456", "Larry", "Mayers", "","1", "11-26-1986", "", "", "M", "", "", "246-231-6897", "", "larry.mayes@outlook.com", "", "", "Profession Member")
+        $query = "INSERT INTO members (username, pwd, f_name, ";
+        $query .= "s_name, m_name, status, DOB, instit_work, ";
+        $query .= "instit_edu, gender, POA, phone, mobile, work, ";
+        $query .= "email, admit_date, resign_date, user_cat) ";
+        $query .= "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ";
+        $query .= "?, ?, ?, ?, ?, ?, ?);";
     
+
         // prepare and bind
-        $stmt = $conn->prepare("INSERT INTO members (username, pwd, f_name, s_name, m_name, status, DOB, instit_work, instit_edu, gender, POA, phone, mobile, work, email, admit_date, resign_date, user_cat) " .
-                . " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param($userInput['username'], $userInput['password'], $userInput['fname'], $userInput['sname'], $userInput['mname'], 1, $userInput['DOB'], $userInput['work'], $userInput['edu'], " .
-        ." $userInput['gender'], $userInput['address'], $userInput['mobile'], $userInput['phone'], $userInput['work'], $userInput['email'], $userInput['ad'], $userInput['rd'], $userInput['membership'] );
+        $stmt = mysqli_stmt_init($dbConnect);
+
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            echo "SQL error";
+        } else {
+            mysqli_stmt_bind_param(
+                $stmt, 
+                "ssssssssssssssssss",
+                $userInput['username'], 
+                $userInput['password'], 
+                $userInput['fname'], 
+                $userInput['sname'], 
+                $userInput['mname'], 
+                $userInput['status'], 
+                $userInput['DOB'], 
+                $userInput['work'], 
+                $userInput['edu'], 
+                $userInput['gender'], 
+                $userInput['POA'], 
+                $userInput['mobile'], 
+                $userInput['phone'], 
+                $userInput['work'], 
+                $userInput['email'], 
+                $userInput['ad'], 
+                $userInput['rd'], 
+                $userInput['membership'] 
+            );
+         $results = mysqli_stmt_execute($stmt);
+
+             //   echo "<b>" . $results . "</b>";
+
+     return $results;
 
 
+        }
+      
 
 
-    */
-
-     $query = "INSERT INTO Users (userFN, userSN, username, email, userPwd, salt)";
+    /* $query = "INSERT INTO Users (userFN, userSN, username, email, userPwd, salt)";
      $query .= "VALUES(?, ?, ?, ?, ?, ?) ";
 
     // $q = "update TABLE set PASS=? where NAME=?";
@@ -69,9 +102,7 @@ public static function registerUser($userInput){
      $f = $usrSalt;
      
      $results = odbc_execute($res, array($a, $b, $c, $d, $e, $f));
-
-
-     return $reuslts;
+        */
 
 }
 
@@ -332,14 +363,14 @@ public static function registerUser($userInput){
         
             $userData = array();
             $users = array();
-            $query = "SELECT * FROM [SchedulerDB].[dbo].[Users] ";
+            $query = "SELECT * FROM members ";
             $query .= "WHERE username = '$username' ";
 
-            $results = odbc_exec($dbConnect, $query);
+            $results = mysqli_query($dbConnect, $query);
 
             if($results){
 
-                while($e=odbc_fetch_object($results)){
+                while($e=$results->fetch_assoc()){
                     $users[]=$e;
                 }
                 $userRecords = json_encode($users);
@@ -347,16 +378,14 @@ public static function registerUser($userInput){
                 $i=0;
                 foreach($userRecord as $usr){
                     $json = array(
-                        'id'    =>  $usr['userId'],
-                        'fname' =>  $usr['userFN'],
-                        'sname' =>  $usr['userSN'],
+                        'id'    =>  $usr['userid'],
+                        'fname' =>  $usr['f_name'],
+                        'sname' =>  $usr['s_name'],
                         'uname' =>  $usr['username'],
                         'email' =>  $usr['email'],
-                        'phone' =>  $usr['userPhone'],
-                        'mobile' => $usr['userMobile'],
-                        'role'  => $usr['userRole'],
-                        'pwd'   => $usr['userPwd'],
-                        'salt'  => $usr['salt']
+                        'phone' =>  $usr['phone'],
+                        'mobile' => $usr['mobile'],
+                        'pwd'   => $usr['pwd']
                     );
                     array_push($userData, $json);
                 }
@@ -520,8 +549,8 @@ public static function registerUser($userInput){
             $dbConnect = self::connection();
           
             // SELECT userId FROM [Users] WHERE userPwd=@userPwd AND username=@username
-                $query = "SELECT * FROM [SchedulerDB].[dbo].[Users] "; 
-                $query .= "WHERE userPwd = '$password' ";
+                $query = "SELECT * FROM members "; 
+                $query .= "WHERE pwd = '$password' ";
                 $query .= "ANd username = '$username' ";
             
             $userData = array();
@@ -529,11 +558,11 @@ public static function registerUser($userInput){
        //     $query = "SELECT * FROM Users ";
        //     $query .= "WHERE username = '$usr' ";
 
-            $results = odbc_exec($dbConnect, $query);
+            $results = mysqli_query($dbConnect, $query);
                 
             if($results){
 
-                while($e=odbc_fetch_object($results)){
+                while($e=$results->fetch_assoc()){
                     $users[]=$e;
                 }
                 $userRecords = json_encode($users);
@@ -541,23 +570,23 @@ public static function registerUser($userInput){
                 $i=0;
                 foreach($userRecord as $usr){
                     $json = array(
-                        'id'    =>  $usr['userId'],
-                        'fname' =>  $usr['userFN'],
-                        'sname' =>  $usr['userSN'],
+                        'id'    =>  $usr['userid'],
+                        'fname' =>  $usr['f_name'],
+                        'sname' =>  $usr['s_name'],
                         'uname' =>  $usr['username'],
                         'email' =>  $usr['email'],
-                        'phone' =>  $usr['userPhone'],
-                        'mobile' => $usr['userMobile'],
-                        'role'  => $usr['userRole'],
-                        'pwd'   => $usr['userPwd'],
-                        'salt'  => $usr['salt']
+                        'phone' =>  $usr['phone'],
+                        'mobile' => $usr['mobile'],
+                        'pwd'   => $usr['pwd']
                     );
                     array_push($userData, $json);
                 }
 
                     // return json_encode($userData);
-                        return $userData;
-
+                       
+                  //  print_r($userData);
+                  //      exit;
+                    return $userData;
             }   else {
              
                 die('Connection Failed...');

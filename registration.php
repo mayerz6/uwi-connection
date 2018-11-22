@@ -3,6 +3,18 @@
 <?php include 'classes/db.php'; ?>
 
 
+<?php
+
+
+$response = "default";
+$response_error = "default";
+$server_error = "default";
+$user_error = "default";
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -50,13 +62,9 @@
 
     <h2>Sign Up NOW!!!</h2>
 
+         <h2 class="<?php echo $server_error; ?>">Warning BITCH!!!</h2>
+
 <?php
-
-
-$response = "default";
-$response_error = "default";
-$server_error = "default";
-$user_error = "default";
 
 
 if(isset($_POST['submit'])){
@@ -71,14 +79,16 @@ if(isset($_POST['submit'])){
   $dob = filter_var($dob, FILTER_SANITIZE_STRING);
   $address = filter_var($address, FILTER_SANITIZE_STRING);
   $gender = filter_var($gender, FILTER_SANITIZE_STRING);
-  $empStatus = filter_var($e_staus, FILTER_SANITIZE_STRING);
-
+  $empStatus = filter_var($e_status, FILTER_SANITIZE_STRING);
+  $work = filter_var($work, FILTER_SANITIZE_STRING);  
   $username = filter_var($username, FILTER_SANITIZE_STRING);
   $mobile = filter_var($mobile, FILTER_SANITIZE_STRING);
   $phone = filter_var($phone, FILTER_SANITIZE_STRING);
   $email = filter_var($email, FILTER_VALIDATE_EMAIL);
   $membership = filter_var($membership, FILTER_SANITIZE_STRING);
-    
+  $admit_date = date("Y-m-d");  
+
+
     $userData = array(
         'fname'     =>  $fname,
         'sname'     =>  $sname,
@@ -88,8 +98,12 @@ if(isset($_POST['submit'])){
         'gender'    =>  $gender,
         'empStatus' =>  $empStatus,
         'email'     =>  $email,
+        'status'    =>  '1',
         'username'  =>  $username,
         'phone'     =>  $phone,
+        'work'      =>  $work,
+        'ad'        =>  $admit_date,
+        'rd'        =>  "",
         'mobile'    =>  $mobile,
         'membership'=>  $membership,    
         'password'  =>  $pwd_2
@@ -99,10 +113,15 @@ if(isset($_POST['submit'])){
 
     $userConfirm = $dbConnect->registerUser($userData);
 
+    if($userConfirm){
+        header('Location: user-profile.php');
+    } else {
+        $server_error = "error";
+    }   
     // print_r($userData);
     // exit;
     
-      //   header('Location: contact.php');
+    
      
 }
 
@@ -114,7 +133,7 @@ if(isset($_POST['submit'])){
 <form action="" onsubmit="return userRegister()" name="registerForm" method="post">
     <div class="row">
 <!-- Row SECTION defined -->
-
+       
             <div class="col-md-12 register-right">
               
                         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -124,6 +143,11 @@ if(isset($_POST['submit'])){
                        
                                 <div class="row register-form">
                                     <div class="col-md-6">
+                                    <div class="form-group">
+                                        <!-- <label>Username</label> -->
+                                        <input type="text" name="username" placeholder="Username *" class="form-control" id="username">
+                                        <div id="usernameErrorMsg"></div>
+                                    </div>
                                         <div class="form-group">
                                             <input type="text" name="f_name" class="form-control" placeholder="First Name" value="" />
                                             <div id="fnErrorMsg"></div>
@@ -137,7 +161,7 @@ if(isset($_POST['submit'])){
                                             <div id="snErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
-                                        <small>Please use the FORMAT <b>MM-dd-YYY</b></small>
+                                        <small>Please use the FORMAT <b>YYYY- MM-dd</b></small>
                                             <input type="text" name="dob" class="form-control"  placeholder="Date of Birth *" value="" />
                                             <div id="dobErrorMsg"></div>
                                         </div>
@@ -169,11 +193,16 @@ if(isset($_POST['submit'])){
                                             <div id="employmentErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
-                                            <input type="text" name="mobile" maxlength="15" class="form-control" placeholder="Your Mobile *" value="" />
+                                        <small>Please use the FORMAT <b>(xxx)-xxx-xxxx</b></small>
+                                            <input type="text" name="mobile" maxlength="15" class="form-control" placeholder="Mobile Contact *" value="" />
                                             <div id="mobileErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
-                                            <input type="text" name="phone" maxlength="15" class="form-control" placeholder="Your Landline" value="" />
+                                            <input type="text" name="work" maxlength="15" class="form-control" placeholder="Work Contact" value="" />
+                                            <div id="mobileErrorMsg"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" name="phone" maxlength="15" class="form-control" placeholder="Landline Contact" value="" />
                                             <div id="phoneErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
@@ -211,11 +240,7 @@ if(isset($_POST['submit'])){
 
 	<div class="col-md-6">
 				
-				<div class="form-group col-lg-12">
-					<!-- <label>Username</label> -->
-					<input type="text" name="username" placeholder="Username *" class="form-control" id="username">
-                    <div id="usernameErrorMsg"></div>
-				</div>
+			
                 				
 				<div class="form-group col-lg-12">
 				<!--	<label>Email Address</label>    -->
