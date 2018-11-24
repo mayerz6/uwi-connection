@@ -1,6 +1,17 @@
 <?php session_start(); ?>
+<?php ob_start(); ?>
+
+<?php include 'classes/db.php'; ?>
+
+    <?php
+
+if($_SESSION){
 
 
+$userConnect = new database;
+
+
+?>
 
 
 <!DOCTYPE html>
@@ -12,7 +23,7 @@
 
             <link rel="icon" href="favicon.png">
 
-        <title>UWI Connection</title>
+        <title>BIPA Registry</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <link rel="stylesheet" href="assets/css/styles.css" >
 
@@ -22,7 +33,7 @@
     <body>
         <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">UWI</a>
+  <a class="navbar-brand" href="#"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -38,7 +49,7 @@
         <a class="nav-link" href="contact.php">Contact</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="registration.php">Registration</a>
+        <a class="nav-link" href="sign-out.php">Sign Out</a>
       </li>
     </ul>
   </div>
@@ -112,8 +123,19 @@
 
 </div>
 
+<?php
 
-        <footer>&copy; Copyright UWI | All Rights Reservered</footer>
+} else {
+
+    header('Location: index.php');
+            exit;
+
+}
+
+?>
+
+
+        <footer>&copy; Copyright Larry Mayers | All Rights Reservered</footer>
     
     </body>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

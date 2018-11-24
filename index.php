@@ -1,4 +1,5 @@
 <?php session_start(); ?>
+<?php ob_start(); ?>
 
 <?php include 'classes/db.php'; ?>
 
@@ -64,7 +65,7 @@ if(isset($_POST['submit'])){
 
                     <link rel="icon" href="favicon.png">
 
-        <title>UWI Connection</title>
+        <title>BIPA Registry</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <link rel="stylesheet" href="assets/css/styles.css" >
     </head>
@@ -72,7 +73,7 @@ if(isset($_POST['submit'])){
     <body>
         <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">UWI</a>
+  <a class="navbar-brand" href="#"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -90,6 +91,13 @@ if(isset($_POST['submit'])){
       <li class="nav-item">
         <a class="nav-link" href="registration.php">Registration</a>
       </li>
+      <?php if($_SESSION) {  ?>
+      
+      <li class="nav-item">
+        <a class="nav-link" href="sign-out.php">Sign Out</a>
+      </li>
+              
+      <?php } ?>
     </ul>
   </div>
 </nav>
@@ -126,6 +134,11 @@ if(isset($_POST['submit'])){
   </div>
   
 </form>
+
+	<h4 class="<?php echo $response_error; ?>">Issues - Username and Password are incorrect.</h4>
+
+<small>You <b>MUST</b> Log In if you wish to view exclusive BIPA content...</small>
+
 
 <script type="text/javascript">
 
@@ -192,7 +205,7 @@ function userLogin(){
 
 </div>
 
-        <footer>&copy; Copyright UWI | All Rights Reservered</footer>
+        <footer>&copy; Copyright Larry Mayers | All Rights Reservered</footer>
     
     </body>
 

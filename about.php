@@ -1,36 +1,5 @@
-
 <?php session_start(); ?>
-
-<?php
-
-$dbhost = "localhost"; // this will ususally be 'localhost', but can sometimes differ
-$dbname = "uwi-connection"; // the name of the database that you are going to use for this project
-$dbuser = "mayerz"; // the username that you created, or were given, to access your database
-$dbpass = "M@y3rZT#ch"; // the password that you created, or were given, to access your database
- 
-$con = mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);
-// mysql_connect($dbhost, $dbuser, $dbpass) or die("MySQL Error: " . mysql_error());
-// mysql_select_db($dbname) or die("MySQL Error: " . mysql_error());
-
-// Check connection
-if (mysqli_connect_errno())
-  {
-  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-  }
-
-// ...some PHP code for database "my_db"...
-   // echo 'Running nigga!';
-       // exit();
-// Change database to "test"
-//mysqli_select_db($con,"test");
-
-// ...some PHP code for database "test"...
-
-mysqli_close($con);
-
-
-?>
-
+<?php ob_start(); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +11,7 @@ mysqli_close($con);
                         <link rel="icon" href="favicon.png">
 
 
-        <title>UWI Connection</title>
+        <title>BIPA Registry</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <link rel="stylesheet" href="assets/css/styles.css" >
     </head>
@@ -50,7 +19,7 @@ mysqli_close($con);
     <body>
         <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">UWI</a>
+  <a class="navbar-brand" href="#"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -68,6 +37,13 @@ mysqli_close($con);
       <li class="nav-item">
         <a class="nav-link" href="registration.php">Registration</a>
       </li>
+       <?php if($_SESSION) {  ?>
+      
+      <li class="nav-item">
+        <a class="nav-link" href="sign-out.php">Sign Out</a>
+      </li>
+              
+      <?php } ?>
     </ul>
   </div>
 </nav>
@@ -76,26 +52,26 @@ mysqli_close($con);
         
 <div class="screen"> 
 
-        <h2>Learn About the Association</h2>
+        <h2>About the Association</h2>
 
 <div class="row">
         <div class="col-md-6"><!-- start slipsum code -->
 
-<h4>No, motherfucker</h4>
-<p>Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends. </p>
+      <img src="assets/images/pngs/Favicon/Favicon-Black_on_Transparent.png" />
+<p>The Barbados ICT Professionals Association (BIPA) is the island’s foremost professional membership organisation for individuals and corporations whose primary focus is the expansion and development of ICT opportunities in Barbados and the Caribbean region.
 
 <!-- end slipsum code --></div>
         <div class="col-md-6">
             <!-- start slipsum code -->
 
-Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows. Some pilots get picked and become television programs. Some don't, become nothing. She starred in one of the ones that became nothing.
-
+<p>BIPA is dedicated to providing its members with a forum in and through which they can exchange industry information, network with other members of the ICT sector, undertake advocacy activities on behalf of industry interests, and collaborate with each other to extend the scale and scope of services accessible through the Barbadian and Caribbean ICT sectors.</p>
+<img height="180px"; src="assets/images/pngs/Favicon/Logo-Black_on_White.png" />
 <!-- end slipsum code -->
         </div>
     </div>
 
 </div>
-        <footer>&copy; Copyright UWI | All Rights Reservered</footer>
+        <footer>&copy; Copyright Larry Mayers | All Rights Reservered</footer>
     
     </body>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

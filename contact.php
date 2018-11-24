@@ -1,35 +1,5 @@
 <?php session_start(); ?>
-
-<?php
-
-$dbhost = "localhost"; // this will ususally be 'localhost', but can sometimes differ
-$dbname = "uwi-connection"; // the name of the database that you are going to use for this project
-$dbuser = "mayerz"; // the username that you created, or were given, to access your database
-$dbpass = "M@y3rZT#ch"; // the password that you created, or were given, to access your database
- 
-$con = mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);
-// mysql_connect($dbhost, $dbuser, $dbpass) or die("MySQL Error: " . mysql_error());
-// mysql_select_db($dbname) or die("MySQL Error: " . mysql_error());
-
-// Check connection
-if (mysqli_connect_errno())
-  {
-  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-  }
-
-// ...some PHP code for database "my_db"...
-   // echo 'Running nigga!';
-       // exit();
-// Change database to "test"
-//mysqli_select_db($con,"test");
-
-// ...some PHP code for database "test"...
-
-mysqli_close($con);
-
-
-?>
-
+<?php ob_start(); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -40,7 +10,7 @@ mysqli_close($con);
 
                         <link rel="icon" href="favicon.png">
 
-        <title>UWI Connection</title>
+        <title>BIPA Registry</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <link rel="stylesheet" href="assets/css/styles.css" >
     </head>
@@ -48,7 +18,7 @@ mysqli_close($con);
     <body>
         <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">UWI</a>
+  <a class="navbar-brand" href="#"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -66,6 +36,13 @@ mysqli_close($con);
       <li class="nav-item">
         <a class="nav-link" href="registration.php">Registration</a>
       </li>
+       <?php if($_SESSION) {  ?>
+      
+      <li class="nav-item">
+        <a class="nav-link" href="sign-out.php">Sign Out</a>
+      </li>
+              
+      <?php } ?>
     </ul>
   </div>
 </nav>
@@ -134,16 +111,19 @@ mysqli_close($con);
             <form>
             <legend><span class="glyphicon glyphicon-globe"></span> Our office</legend>
             <address>
-                <strong>Twitter, Inc.</strong><br>
-                795 Folsom Ave, Suite 600<br>
-                San Francisco, CA 94107<br>
+                <strong>The Barbados ICT Professionals' Association</strong><br>
+                Building #3 Unit 2B<br />
+                Harbour Industrial Estate<br />
+                Bridgetown<br />
+                Barbados
+
                 <abbr title="Phone">
                     P:</abbr>
-                (123) 456-7890
+                (246) 456-7890
             </address>
             <address>
-                <strong>Full Name</strong><br>
-                <a href="mailto:#">first.last@example.com</a>
+                <strong>Email Us</strong><br>
+                <a href="mailto:#">membership@barbadosict.org</a>
             </address>
             </form>
         </div>
@@ -155,7 +135,7 @@ mysqli_close($con);
  
 
 </div>
-        <footer>&copy; Copyright UWI | All Rights Reservered</footer>
+        <footer>&copy; Copyright Larry Mayers | All Rights Reservered</footer>
     
     </body>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

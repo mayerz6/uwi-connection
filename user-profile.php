@@ -1,31 +1,15 @@
 <?php session_start(); ?>
+<?php ob_start(); ?>
 
-<?php
+<?php include 'classes/db.php'; ?>
 
-$dbhost = "localhost"; // this will ususally be 'localhost', but can sometimes differ
-$dbname = "uwi-connection"; // the name of the database that you are going to use for this project
-$dbuser = "mayerz"; // the username that you created, or were given, to access your database
-$dbpass = "M@y3rZT#ch"; // the password that you created, or were given, to access your database
- 
-$con = mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);
-// mysql_connect($dbhost, $dbuser, $dbpass) or die("MySQL Error: " . mysql_error());
-// mysql_select_db($dbname) or die("MySQL Error: " . mysql_error());
+ <?php
 
-// Check connection
-if (mysqli_connect_errno())
-  {
-  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-  }
+if($_SESSION){
 
-// ...some PHP code for database "my_db"...
-   // echo 'Running nigga!';
-       // exit();
-// Change database to "test"
-//mysqli_select_db($con,"test");
 
-// ...some PHP code for database "test"...
+$userConnect = new database;
 
-mysqli_close($con);
 
 
 ?>
@@ -40,7 +24,7 @@ mysqli_close($con);
 
                         <link rel="icon" href="favicon.png">
 
-        <title>UWI Connection</title>
+        <title>BIPA Registry</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <link rel="stylesheet" href="assets/css/styles.css" >
     </head>
@@ -48,7 +32,7 @@ mysqli_close($con);
     <body>
         <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">UWI</a>
+  <a class="navbar-brand" href="#"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -64,7 +48,7 @@ mysqli_close($con);
         <a class="nav-link" href="contact.php">Contact</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="registration.php">Registration</a>
+        <a class="nav-link" href="sign-out.php">Sign Out</a>
       </li>
     </ul>
   </div>
@@ -78,7 +62,7 @@ mysqli_close($con);
         <div class="row">
             <div class="col-sm-12 col-lg-12">
                 <h1 class="h1">Welcome to Our Team!</h1>
-                <small>Have fun in your end profile account...</small>
+                <small>Have fun in your unique profile account <b><?php echo $_SESSION['firstname']; ?></b>...</small>
             </div>
         </div>
     </div>
@@ -155,6 +139,23 @@ mysqli_close($con);
  
 
 </div>
+
+
+<?php 
+    
+} else {
+
+    header('Location: index.php');
+            exit;
+
+}
+
+
+?>
+
+
+
+
         <footer>&copy; Copyright UWI | All Rights Reservered</footer>
     
     </body>
@@ -162,3 +163,7 @@ mysqli_close($con);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </html>
+
+
+
+<?php ob_end_flush(); ?>

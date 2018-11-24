@@ -1,17 +1,16 @@
 <?php session_start(); ?>
+<?php ob_start(); ?>
+
 
 <?php include 'classes/db.php'; ?>
 
 
 <?php
 
-
 $response = "default";
 $response_error = "default";
 $server_error = "default";
 $user_error = "default";
-
-
 
 ?>
 
@@ -89,6 +88,9 @@ if(isset($_POST['submit'])){
   $admit_date = date("Y-m-d");  
 
 
+  $dob = date("Y-m-d", strtotime("$dob"));
+ 
+
     $userData = array(
         'fname'     =>  $fname,
         'sname'     =>  $sname,
@@ -114,9 +116,21 @@ if(isset($_POST['submit'])){
     $userConfirm = $dbConnect->registerUser($userData);
 
     if($userConfirm){
+    
+        $userData = $dbConnect->fetchUserByUsername($username);
+
+        $_SESSION['id'] = $userData[0]['userid'];
+        $_SESSION['firstname'] = $userData[0]['f_name'];
+        $_SESSION['surname'] = $userData[0]['s_name'];
+        $_SESSION['username'] = $userData[0]['username'];             
+                    
+    
         header('Location: user-profile.php');
+        
     } else {
+    
         $server_error = "error";
+        
     }   
     // print_r($userData);
     // exit;
@@ -161,7 +175,7 @@ if(isset($_POST['submit'])){
                                             <div id="snErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
-                                        <small>Please use the FORMAT <b>YYYY- MM-dd</b></small>
+                                        <small>Please use the FORMAT <b>dd/MM/YYYY</b></small>
                                             <input type="text" name="dob" class="form-control"  placeholder="Date of Birth *" value="" />
                                             <div id="dobErrorMsg"></div>
                                         </div>
