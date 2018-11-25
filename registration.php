@@ -3,7 +3,7 @@
 
 
 <?php include 'classes/db.php'; ?>
-
+<?php include 'classes/encryption.php'; ?>
 
 <?php
 
@@ -90,6 +90,29 @@ if(isset($_POST['submit'])){
 
   $dob = date("Y-m-d", strtotime("$dob"));
  
+  
+    $dbConnect = new database;
+    $userEncrypt = new encryption;
+
+     
+/* Call meant to verify if a requested USERNAME already exists. */
+  $checkUser = $dbConnect->retrieveUsersByUsername($username);
+  // Code for testing...  
+           // echo $checkUser[0]['Results']; exit;
+  
+    if($checkUser[0]['Results'] != 0){
+  
+      $user_error = "error";
+  
+    } else {
+  
+
+        if($email != false){
+
+            $pwdEncrypt = $userEncrypt->hashPwd($pwd_2);
+            $usrSalt = $userEncrypt->generateSalt();
+                $txt =  $pwdEncrypt . "" . $usrSalt; 
+                    $usrPwdHash = $userEncrypt->hashPwd($txt); 
 
     $userData = array(
         'fname'     =>  $fname,
@@ -104,37 +127,46 @@ if(isset($_POST['submit'])){
         'username'  =>  $username,
         'phone'     =>  $phone,
         'work'      =>  $work,
+        'edu'       =>  "College",
         'ad'        =>  $admit_date,
         'rd'        =>  "",
         'mobile'    =>  $mobile,
         'membership'=>  $membership,    
-        'password'  =>  $pwd_2
+        'password'  =>  $usrPwdHash,
+        'salt'      =>  $usrSalt
     );
-  
-    $dbConnect = new database;
 
+
+    
     $userConfirm = $dbConnect->registerUser($userData);
 
-    if($userConfirm){
-    
-        $userData = $dbConnect->fetchUserByUsername($username);
+        if($userConfirm){
+            
+                $userData = $dbConnect->fetchUserByUsername($username);
 
-        $_SESSION['id'] = $userData[0]['userid'];
-        $_SESSION['firstname'] = $userData[0]['f_name'];
-        $_SESSION['surname'] = $userData[0]['s_name'];
-        $_SESSION['username'] = $userData[0]['username'];             
-                    
-    
-        header('Location: user-profile.php');
+                $_SESSION['id'] = $userData[0]['userid'];
+                $_SESSION['firstname'] = $userData[0]['f_name'];
+                $_SESSION['surname'] = $userData[0]['s_name'];
+                $_SESSION['username'] = $userData[0]['username'];             
+                            
+            
+                header('Location: user-profile.php');
+                
+            } else {
+            
+                $server_error = "error";
+                
+            }   
+
+        }
         
-    } else {
-    
-        $server_error = "error";
-        
-    }   
+
     // print_r($userData);
     // exit;
     
+  
+    }  
+
     
      
 }

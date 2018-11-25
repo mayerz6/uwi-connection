@@ -2,10 +2,18 @@
 <?php ob_start(); ?>
 
 <?php include 'classes/db.php'; ?>
+<?php include 'classes/encryption.php'; ?>
+
 
 <?php
 
 $dbConnect = new database;
+$userEncrypt = new encryption;
+
+$response = "default";
+$response_error = "default";
+$server_error = "default";
+
 
 if(isset($_POST['submit'])){
 
@@ -28,7 +36,12 @@ if(isset($_POST['submit'])){
 
         if(!empty($userData)){
 
-          $recordUser = $dbConnect->authorizeUser($filteredUsername, $usrPwd);
+            $pwdEncrypt = $userEncrypt->hashPwd($usrPwd);
+              $usrSalt = $dbConnect->fetchUserSalt($username);
+                 $txt =  $pwdEncrypt . "" . $usrSalt; 
+                      $usrPwdHash = $userEncrypt->hashPwd($txt);
+
+          $recordUser = $dbConnect->authorizeUser($filteredUsername, $usrPwdHash);
          
              if(!empty($recordUser)){
                      

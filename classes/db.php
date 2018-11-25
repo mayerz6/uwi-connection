@@ -44,9 +44,9 @@ public static function registerUser($userInput){
         $query = "INSERT INTO members (username, pwd, f_name, ";
         $query .= "s_name, m_name, status, DOB, instit_work, ";
         $query .= "instit_edu, gender, POA, phone, mobile, work, ";
-        $query .= "email, admit_date, resign_date, user_cat) ";
+        $query .= "email, admit_date, resign_date, user_cat, salt) ";
         $query .= "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ";
-        $query .= "?, ?, ?, ?, ?, ?, ?);";
+        $query .= "?, ?, ?, ?, ?, ?, ?, ?);";
     
 
         // prepare and bind
@@ -57,7 +57,7 @@ public static function registerUser($userInput){
         } else {
             mysqli_stmt_bind_param(
                 $stmt, 
-                "ssssssssssssssssss",
+                "sssssssssssssssssss",
                 $userInput['username'], 
                 $userInput['password'], 
                 $userInput['fname'], 
@@ -69,13 +69,14 @@ public static function registerUser($userInput){
                 $userInput['edu'], 
                 $userInput['gender'], 
                 $userInput['POA'], 
-                $userInput['mobile'], 
                 $userInput['phone'], 
+                $userInput['mobile'], 
                 $userInput['work'], 
                 $userInput['email'], 
                 $userInput['ad'], 
                 $userInput['rd'], 
-                $userInput['membership'] 
+                $userInput['membership'],
+                $userInput['salt']  
             );
          $results = mysqli_stmt_execute($stmt);
 
@@ -333,16 +334,16 @@ public static function registerUser($userInput){
             /* Initial call to the database connection METHOD */
             $dbConnect = self::connection();
 
-            $query = "SELECT COUNT(*) AS Results FROM [SchedulerDB].[dbo].[Users] ";
+            $query = "SELECT COUNT(*) AS Results FROM members ";
             $query .= "WHERE username = '$username' ";
             
 
-            $results = odbc_exec($dbConnect, $query);
+            $results = mysqli_query($dbConnect, $query);
 
             
             if($results){
 
-                while($e=odbc_fetch_object($results)){
+                while($e=$results->fetch_assoc()){
                     $users[]=$e;
                 }
 
@@ -458,14 +459,14 @@ public static function registerUser($userInput){
         
             $userData = array();
             $users = array();
-            $query = "SELECT * FROM [SchedulerDB].[dbo].[Users] ";
+            $query = "SELECT * FROM members ";
             $query .= "WHERE username = '$username' ";
 
-            $results = odbc_exec($dbConnect, $query);
+            $results = mysqli_query($dbConnect, $query);
 
             if($results){
 
-                while($e=odbc_fetch_object($results)){
+                while($e=$results->fetch_assoc()){
                     $users[]=$e;
                 }
                 $userRecords = json_encode($users);
@@ -473,15 +474,14 @@ public static function registerUser($userInput){
                 $i=0;
                 foreach($userRecord as $usr){
                     $json =  array(
-                        'id'    =>  $usr['userId'],
-                        'fname' =>  $usr['userFN'],
-                        'sname' =>  $usr['userSN'],
+                        'id'    =>  $usr['userid'],
+                        'fname' =>  $usr['f_name'],
+                        'sname' =>  $usr['s_name'],
                         'uname' =>  $usr['username'],
                         'email' =>  $usr['email'],
-                        'phone' =>  $usr['userPhone'],
-                        'mobile' => $usr['userMobile'],
-                        'role'  => $usr['userRole'],
-                        'pwd'   => $usr['userPwd'],
+                        'phone' =>  $usr['phone'],
+                        'mobile' => $usr['mobile'],
+                        'pwd'   => $usr['pwd'],
                         'salt'  => $usr['salt']
                     );
                     array_push($userData, $json);
