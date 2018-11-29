@@ -48,6 +48,9 @@ $userConnect = new database;
         <a class="nav-link" href="contact.php">Contact</a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" href="schedule.php">Schedule</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="sign-out.php">Sign Out</a>
       </li>
     </ul>
