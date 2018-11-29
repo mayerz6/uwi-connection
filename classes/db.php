@@ -3,7 +3,6 @@
 class database {
 
         private static function connection(){
-
             
         // Set up ODBC connection
     /* Success connection to SQL Database */
@@ -87,29 +86,54 @@ public static function registerUser($userInput){
 
         }
       
+}
 
+public static function displayAllUsers(){
 
-    /* $query = "INSERT INTO Users (userFN, userSN, username, email, userPwd, salt)";
-     $query .= "VALUES(?, ?, ?, ?, ?, ?) ";
+    $dbConnect = self::connection();
 
-    // $q = "update TABLE set PASS=? where NAME=?";
-     $res = odbc_prepare($connection, $query);
+    $userData = array();
+    $users = array();
+    $json = array();
 
-     $a = $fname; 
-     $b = $sname;
-     $c = $username;
-     $d = $email;
-     $e = $usrPwdHash;
-     $f = $usrSalt;
-     
-     $results = odbc_execute($res, array($a, $b, $c, $d, $e, $f));
-        */
+    $query = 'SELECT * FROM members';
+
+    
+    $results = mysqli_query($dbConnect, $query);
+
+    if($results){
+
+        while($e=$results->fetch_assoc()){
+            $users[]=$e;
+        }
+
+        $userRecords = json_encode($users);
+        $userRecord = json_decode($userRecords, true);
+        $i=0;
+
+        foreach($userRecord as $usr){
+       
+            echo "<span><b>User:</b>" . $usr['username'] . "</span>";
+            echo "<span><b>Contact:</b>" . $usr['email'] . "</span>";
+            echo "<span><b><a href='edit-account?id=" . $usr['userid'] . "'>Edit</a></b></span>";
+            echo "<span><b><a href='delete-account?id=" . $usr['userid'] . "'>Delete</a></b></span><br />";
+
+        }
+
+        return true;
+           
+    }   else {
+
+        die('Connection Failed...');
+    }
 
 }
 
 
         public static function fetchAllUsers(){
+
             $dbConnect = self::connection();
+            
             $userData = array();
             $users = array();
             $json = array();
@@ -358,7 +382,6 @@ public static function registerUser($userInput){
 
         public static function fetchUserByUsername($username){
          
-         
             /* Initial call to the database connection METHOD */
             $dbConnect = self::connection();
         
@@ -377,6 +400,7 @@ public static function registerUser($userInput){
                 $userRecords = json_encode($users);
                 $userRecord = json_decode($userRecords, true);
                 $i=0;
+
                 foreach($userRecord as $usr){
                     $json = array(
                         'id'    =>  $usr['userid'],
@@ -410,14 +434,15 @@ public static function registerUser($userInput){
         
             $userData = array();
             $users = array();
-            $query = "SELECT * FROM [SchedulerDB].[dbo].[Users] ";
-            $query .= "WHERE userId = '$userId' ";
 
-            $results = odbc_exec($dbConnect, $query);
+            $query = "SELECT * FROM Members ";
+            $query .= "WHERE userid = '$userId' ";
+
+            $results = mysqli_query($dbConnect, $query);
 
             if($results){
 
-                while($e=odbc_fetch_object($results)){
+                while($e=$results->fetch_assoc()){
                     $users[]=$e;
                 }
                 $userRecords = json_encode($users);
@@ -425,18 +450,25 @@ public static function registerUser($userInput){
                 $i=0;
                 foreach($userRecord as $usr){
                     $json = array(
-                        'id'    =>  $usr['userId'],
-                        'fname' =>  $usr['userFN'],
-                        'sname' =>  $usr['userSN'],
-                        'uname' =>  $usr['username'],
+                        'uname' => $usr['username'],
+                        'fname' =>  $usr['f_name'],
+                        'sname' =>  $usr['s_name'],
+                        'mname' =>  $usr['m_name'],
                         'email' =>  $usr['email'],
                         'phone' =>  $usr['userPhone'],
                         'mobile' => $usr['userMobile'],
-                        'role'  => $usr['userRole'],
-                        'pwd'   => $usr['userPwd'],
-                        'salt'  => $usr['salt']
+                        'work'  =>  $usr['work'],
+                        'dob'  => $usr['DOB'],
+                        'poa'   => $usr['POA'],
+                        'cat'  => $usr['user_cat'],
+                        'work-place' => $usr['instit_work'],
+                        'edu-place' => $usr['instit_edu']
+
                 );
                     array_push($userData, $json);
+                
+                    
+
                 }
 
                     // return json_encode($userData);

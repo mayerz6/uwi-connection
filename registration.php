@@ -34,7 +34,7 @@ $user_error = "default";
         <header>
     
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">UWI</a>
+  <a class="navbar-brand" href="#"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -49,9 +49,20 @@ $user_error = "default";
       <li class="nav-item">
         <a class="nav-link" href="contact.php">Contact</a>
       </li>
+     
+      <?php if($_SESSION) {  ?>
+      
+      <li class="nav-item">
+        <a class="nav-link" href="sign-out.php">Sign Out</a>
+      </li>
+              
+      <?php } else { ?>
+      
       <li class="nav-item">
         <a class="nav-link" href="registration.php">Registration</a>
       </li>
+
+      <?php } ?>
     </ul>
   </div>
 </nav>
@@ -61,7 +72,7 @@ $user_error = "default";
 
     <h2>Sign Up NOW!!!</h2>
 
-         <h2 class="<?php echo $server_error; ?>">Warning BITCH!!!</h2>
+         <h2 class="<?php echo $server_error; ?>">Warning unable to register user at this time...</h2>
 
 <?php
 
@@ -330,20 +341,18 @@ if(isset($_POST['submit'])){
 			</div>
 		
 			<div class="col-md-6">
-				<h3 class="dark-grey">Terms and Conditions</h3>
+				<h3 class="dark-grey">Terms &amp; Conditions</h3>
 				<p>
-					By clicking on "Register" you agree to The Company's' Terms and Conditions
+					By clicking on "Register" you agree to The Associations's Code of Conduct for acting as a member of the Barbados ICT Professionals' Association.
 				</p>
 				<p>
-					While rare, prices are subject to change based on exchange rate fluctuations - 
-					should such a fluctuation happen, we may request an additional payment. You have the option to request a full refund or to pay the new price. (Paragraph 13.5.8)
-				</p>
-				<p>
-					Should there be an error in the description or pricing of a product, we will provide you with a full refund (Paragraph 13.5.6)
-				</p>
-				<p>
-					Acceptance of an order by us is dependent on our suppliers ability to provide the product. (Paragraph 13.5.6)
-				</p>
+                This Code sets out the professional standards required by the Association as a condition of membership. It applies to members of all grades, including 
+                students, and affiliates, and also non members who offer their expertise as part of the Association’s Professional Advice Register. The Code governs your 
+                personal conduct as an individual member of BIPA and not the nature of business or ethics of the relevant authority. It will, therefore, be a matter of 
+                exercising your personal judgement in meeting the Code’s requirements.  Any breach of the Code of Conduct brought to the attention of the Association 
+                will be considered under the Association’s disciplinary procedures. You should also ensure that you notify the Association of any significant violation 
+                of this Code by another BIPA member.</p>
+                
 				
                 <button name="submit" class="btn btn-primary">Register</button>
 
@@ -506,7 +515,15 @@ function rVerify() {
 
 function userRegister(){
         
-if(firstname.value == ""){
+    if(username.value == ""){
+            username.style.border = "1px solid #ff0000";
+            usernameError.textContent = "Username is required!";
+            usernameError.style.color = "#ff0000";
+                        username.focus();
+                            return false;
+        }   
+
+        if(firstname.value == ""){
             firstname.style.border = "1px solid #ff0000";
                 firstnameError.textContent = "Firstname is required!";
                     firstnameError.style.color = "#ff0000";
@@ -519,14 +536,6 @@ if(firstname.value == ""){
                 surnameError.textContent = "Surname is required!";
                     surnameError.style.color = "#ff0000";
                         surname.focus();
-                            return false;
-        }
-
-        if(username.value == ""){
-            username.style.border = "1px solid #ff0000";
-            usernameError.textContent = "Username is required!";
-            usernameError.style.color = "#ff0000";
-                        username.focus();
                             return false;
         }
 

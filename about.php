@@ -34,16 +34,21 @@
       <li class="nav-item">
         <a class="nav-link" href="contact.php">Contact</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="registration.php">Registration</a>
-      </li>
-       <?php if($_SESSION) {  ?>
+     
+      <?php if($_SESSION) {  ?>
       
       <li class="nav-item">
         <a class="nav-link" href="sign-out.php">Sign Out</a>
       </li>
               
+      <?php } else { ?>
+      
+      <li class="nav-item">
+        <a class="nav-link" href="registration.php">Registration</a>
+      </li>
+
       <?php } ?>
+      
     </ul>
   </div>
 </nav>
