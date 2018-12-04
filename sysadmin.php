@@ -3,7 +3,7 @@
 
 <?php include 'classes/db.php'; ?>
 
-<?php if($_SESSION){ ?>
+<?php if($_SESSION['role'] == "Administrator"){ ?>
 
 
 <!DOCTYPE html>
@@ -42,7 +42,7 @@
 				<a class="nav-link" href="contact.php">Contact</a>
 			</li>
 			<li class="nav-item">
-					<a class="nav-link" href="schedule.php">Schedule</a>
+					<a class="nav-link" href="scheduler.php">Schedule</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="sign-out.php">Sign Out</a>
@@ -57,33 +57,47 @@
 
 
 <div class="row">
-	<div class="col-md-6">
+	<div class="col-md-8">
 				
-				<h3 class="dark-grey">Manage Accounts</h3>
+                <h3 class="dark-grey">Manage Accounts</h3>
 		
-			<?php  $usrConnect = new database; ?>
-				<hr />
-				<?php $usrConnect->displayAllUsers(); ?>
-				<hr />
-			</div>
-		
-			<div class="col-md-6">
-				<h3 class="dark-grey">Terms and Conditions</h3>
-				<p>
-					By clicking on "Register" you agree to The Company's' Terms and Conditions
-				</p>
-				<p>
-					While rare, prices are subject to change based on exchange rate fluctuations - 
-					should such a fluctuation happen, we may request an additional payment. You have the option to request a full refund or to pay the new price. (Paragraph 13.5.8)
-				</p>
-				<p>
-					Should there be an error in the description or pricing of a product, we will provide you with a full refund (Paragraph 13.5.6)
-				</p>
-				<p>
-					Acceptance of an order by us is dependent on our suppliers ability to provide the product. (Paragraph 13.5.6)
-				</p>
-				
-				<button type="submit" class="btn btn-primary">Register</button>
+                <!-- User Accounts TABLE  -->
+                   <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                              <th scope="col">First</th>
+                              <th scope="col">Last</th>
+                              <th scope="col">Email</th>
+                              <th colspan="2" scope="col-2">Manage</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <?php  $usrConnect = new database; ?>
+                        
+                        <?php $usrConnect->displayAllUsers(); ?>
+                          </tbody>
+                      </table>                           
+                <!--  User Accounts TABLE   -->
+          
+          </div>
+
+          <div class="col-md-4">
+                <h3 class="dark-grey">Terms and Conditions</h3>
+                <p>
+                        By clicking on "Register" you agree to The Company's' Terms and Conditions
+                </p>
+                <p>
+                        While rare, prices are subject to change based on exchange rate fluctuations - 
+                        should such a fluctuation happen, we may request an additional payment. You have the option to request a full refund or to pay the new price. (Paragraph 13.5.8)
+                </p>
+                <p>
+                        Should there be an error in the description or pricing of a product, we will provide you with a full refund (Paragraph 13.5.6)
+                </p>
+                <p>
+                        Acceptance of an order by us is dependent on our suppliers ability to provide the product. (Paragraph 13.5.6)
+                </p>
+                
+              
             </div>
             
 </div>

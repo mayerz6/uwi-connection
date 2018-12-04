@@ -1,18 +1,9 @@
 <?php session_start(); ?>
 <?php ob_start(); ?>
 
+
+<?php include 'classes/connect.php';  ?>
 <?php include 'classes/db.php'; ?>
-
- <?php
-
-if($_SESSION){
-
-
-$userConnect = new database;
-
-
-
-?>
 
 
 <!DOCTYPE html>
@@ -38,121 +29,211 @@ $userConnect = new database;
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
-    <li class="nav-item active">
+     <?php if($_SESSION) { ?>
+      <li class="nav-item active">
+        <a class="nav-link" href="dashboard.php">Dashboard <span class="sr-only">(current)</span></a>
+      </li>
+      <?php } else { ?>
+       <li class="nav-item active">
         <a class="nav-link" href="index.php">Home <span class="sr-only">(current)</span></a>
       </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="user-profile.php">Profile</a>
+      </li>
+      <?php } ?>
       <li class="nav-item">
         <a class="nav-link" href="about.php">About</a>
       </li>
+       <?php if($_SESSION['role'] == "Administrator") { ?>
+       <li class="nav-item">
+        <a class="nav-link" href="sysadmin.php">Manage Accounts</a>
+	  </li>
+      <?php } ?>
       <li class="nav-item">
         <a class="nav-link" href="contact.php">Contact</a>
+	  </li>
+	  <li class="nav-item">
+        <a class="nav-link" href="scheduler.php">Schedule</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="sign-out.php">Sign Out</a>
-      </li>
+      </li> 
     </ul>
   </div>
 </nav>
         </header>
 
-<div class="screen"> 
 
-<div class="jumbotron jumbotron-sm">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12 col-lg-12">
-                <h1 class="h1">Welcome to Our Team!</h1>
-                <small>Have fun in your unique profile account <b><?php echo $_SESSION['firstname']; ?></b>...</small>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="container">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="well well-sm">
-                <form>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="name">
-                                Name</label>
-                            <input type="text" class="form-control" id="name" placeholder="Enter name" required="required" />
-                        </div>
-                        <div class="form-group">
-                            <label for="email">
-                                Email Address</label>
-                            <div class="input-group">
-                                <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span>
-                                </span>
-                                <input type="email" class="form-control" id="email" placeholder="Enter email" required="required" /></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="subject">
-                                Subject</label>
-                            <select id="subject" name="subject" class="form-control" required="required">
-                                <option value="na" selected="">Choose One:</option>
-                                <option value="service">General Customer Service</option>
-                                <option value="suggestions">Suggestions</option>
-                                <option value="product">Product Support</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="name">
-                                Message</label>
-                            <textarea name="message" id="message" class="form-control" rows="9" cols="25" required="required"
-                                placeholder="Message"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <button type="submit" class="btn btn-primary pull-right" id="btnContactUs">
-                            Send Message</button>
-                    </div>
-                </div>
-                </form>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <form>
-            <legend><span class="glyphicon glyphicon-globe"></span> Our office</legend>
-            <address>
-                <strong>Twitter, Inc.</strong><br>
-                795 Folsom Ave, Suite 600<br>
-                San Francisco, CA 94107<br>
-                <abbr title="Phone">
-                    P:</abbr>
-                (123) 456-7890
-            </address>
-            <address>
-                <strong>Full Name</strong><br>
-                <a href="mailto:#">first.last@example.com</a>
-            </address>
-            </form>
-        </div>
-    </div>
-</div>
+<?php
 
-<!-- Might not need it... -->
+$serverError = "default";
 
- 
-
-</div>
+if($_SESSION) {
 
 
-<?php 
     
-} else {
+    $userConnect = new database;
+    $userEncrypt = new encryption;
+    
+    $userData = $userConnect->fetchUserByUsername($_SESSION['username']);
+    
+    if(isset($_POST['cancel'])) {  
+        header('Location: user-profile.php');
+        exit; }
 
-    header('Location: index.php');
-            exit;
+
+    if(isset($_POST['submit'])) {
+    /* Once the user SUMBITS the form, perform the following tasks. */
+                
+ 
+    /* Extract all the elements within the $_POST super GLOBAL. */
+        extract($_POST);
+
+          /* We MUST sanitize our input fields for SECURITY purposes. */
+      $fname = filter_var($tbFirstname, FILTER_SANITIZE_STRING);
+      $sname = filter_var($tbSurname, FILTER_SANITIZE_STRING);
+      $username = filter_var($tbUsername, FILTER_SANITIZE_STRING);
+      $email = filter_var($tbEmail, FILTER_VALIDATE_EMAIL);
+      $phone = filter_var($tbPhone, FILTER_SANITIZE_STRING);
+      $mobile = filter_var($tbMobile, FILTER_SANITIZE_STRING);
+    //  $role = filter_var($ddRole, FILTER_SANITIZE_STRING);
+      
+    $recordId = $userData[0]['id'];
+    /*
+    
+        $pwdEncrypt = $userEncrypt->hashPwd($tbLivePwd);
+        $usrSalt = $userData[0]['salt'];
+          $txt =  $pwdEncrypt . "" . $usrSalt; 
+              $usrPwdHash = $userEncrypt->hashPwd($txt);
+
+              $recordUser = $userConnect->authorizeUser($userData[0]['uname'], $usrPwdHash);
+     
+                $pwdEncrypt = $userEncrypt->hashPwd($tbConfirmedPwd);
+                    $usrSalt = $userEncrypt->generateSalt();
+                     $txt =  $pwdEncrypt . "" . $usrSalt; 
+                        $usrPwdHash = $userEncrypt->hashPwd($txt);
+
+    */
+
+            /*    Example of a PREPARED Statements   */
+                /* Improved Security */
+                if(!empty($recordId)){
+
+               $query = "UPDATE members SET ";
+               $query .= "f_name = '$fname', ";
+               $query .= "s_name = '$sname', ";
+               $query .= "username = '$username', ";
+               $query .= "email = '$email', ";
+               $query .= "phone = '$phone', ";
+               $query .= "mobile = '$mobile' ";
+               $query .= "WHERE  userid = '$recordId' ";
+      
+                // Code for testing...  
+                  //  print_r($query); exit;
+
+               $results = mysqli_query($connection, $query);
+
+               if($results) {
+      
+                  header('Location: user-profile.php');
+                        exit;
+
+                    } else {
+                        $serverError = "error";
+                    }
+                
+            
+        } else {
+            $serverError = "error";
+           }
 
 }
 
 
 ?>
 
+
+
+<div class="screen">    
+
+<div class="jumbotron jumbotron-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-lg-12">
+                <h1 class="h1">...secure access ONLY!</h1>
+                <small>Have fun in your unique profile account <b><?php echo $_SESSION['firstname']; ?></b>...</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+ 
+      <div class="row">
+
+                <div class="col-md-9">
+                     <form name="editForm" onsubmit="return userUpdate()" action="" method="post">
+         
+                    
+                <div class="form-group">
+                    <h4><b>Name</b></h4>
+                <label><u>First Name</u></label>
+                    <input name="tbFirstname" type="text" value="<?php echo $userData[0]['fname'];  ?>" class="form-control" />
+                            <div class="inputError" id="firstnameError"></div>
+                <label><u>Surname</u></label>
+                    <input name="tbSurname" type="text" value="<?php echo $userData[0]['sname'];  ?>" class="form-control" />
+                            <div class="inputError" id="surnameError"></div>
+                <label><u>Username</u></label>
+                    <input name="tbUsername" type="text" value="<?php echo $userData[0]['uname'];  ?>" class="form-control" />
+                            <div class="inputError" id="usernameError"></div>
+                </div>
+                <div class="form-group">
+                    <h4><b>Contact</b></h4>
+                <label><u>Phone</u></label>
+                    <input name="tbPhone" type="text" value="<?php echo $userData[0]['phone'];  ?>" class="form-control" />
+                            <div class="inputError" id="phoneError"></div>
+                <label><u>Mobile</u></label>
+                    <input name="tbMobile" type="text" value="<?php echo $userData[0]['mobile'];  ?>" class="form-control" />
+                        <div class="inputError" id="mobileError"></div>
+                <label><u>Email</u></label>
+                    <input name="tbEmail" type="text" value="<?php echo $userData[0]['email'];  ?>" class="form-control" />
+                            <div class="inputError" id="emailError"></div>
+                </div>
+              
+                <button name="submit" class="btn btn-default">Submit</button>
+                <button onClick="window.location='calendar.php';" name="cancel" class="btn btn-danger">Cancel</button>
+                        <br />
+                        <br />
+                <h4 class="<?php echo $serverError; ?>"><b>Issues</b> - Entered password doesn't match orginal!</h4>
+
+                        </form>
+               
+               </div>
+      
+         <div class="col-md-3">  
+                  <img alt="User Pic" src="" class="img-responsive" />        
+              </div>
+
+            
+</div>
+
+         </div>
+
+
+
+
+
+
+<?php
+
+} else {
+
+    header('Location: index.php');
+            exit;
+
+}
+    
+  
+?>
 
 
 

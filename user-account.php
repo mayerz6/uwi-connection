@@ -5,7 +5,7 @@
 
  <?php
 
-if($_SESSION){
+if(($_SESSION['id'] == 31) && ($_GET['id'])){
 
 
 $userConnect = new database;
@@ -137,8 +137,8 @@ $userData = $userConnect->fetchUserByUsername($_SESSION['username']);
                      <br />
                      <br />
 
-                  <a href="edit-profile.php" class="btn btn-primary">Edit Details</a>
-                  <a href="user-scheduler.php" class="btn btn-primary">View Your Schedule</a>
+                  <a href="edit-account.php" class="btn btn-primary">Edit Details</a>
+                  <a href="reset-credentials.php" class="btn btn-primary">Password Reset</a>
               
                     </div>
                       <!-- Section showcasing USER profile data -->

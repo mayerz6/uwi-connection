@@ -24,9 +24,15 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
-    <li class="nav-item active">
+     <?php if($_SESSION) { ?>
+      <li class="nav-item active">
+        <a class="nav-link" href="dashboard.php">Dashboard <span class="sr-only">(current)</span></a>
+      </li>
+      <?php } else { ?>
+       <li class="nav-item active">
         <a class="nav-link" href="index.php">Home <span class="sr-only">(current)</span></a>
       </li>
+      <?php } ?>
       <li class="nav-item">
         <a class="nav-link" href="about.php">About</a>
       </li>
@@ -34,20 +40,18 @@
         <a class="nav-link" href="contact.php">Contact</a>
       </li>
      
-      <?php if($_SESSION) {  ?>
-      
+       <?php if($_SESSION) { ?>
+       <li class="nav-item">
+        <a class="nav-link" href="scheduler.php">Schedule</a>
+      </li>
       <li class="nav-item">
         <a class="nav-link" href="sign-out.php">Sign Out</a>
       </li>
-              
       <?php } else { ?>
-      
       <li class="nav-item">
         <a class="nav-link" href="registration.php">Registration</a>
       </li>
-
       <?php } ?>
-      
     </ul>
   </div>
 </nav>

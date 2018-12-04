@@ -1,12 +1,11 @@
 body { margin: 0; }
 
 
-div.screen { height: 600px; width: 100%; outline: 1px solid #000000; padding: 10px; margin: 10px 10px; }
+div.screen { height: 600px; width: 100%; outline: 1px solid #f8f9fa!important; padding: 10px; margin: 10px 10px; }
 h4.error { outline: 1px solid #ff0000; }
 .msg-success { outline: 1px solid #43dd00; width: 100%; }
 .default { display: none; }
-.error { color: red; font-weight: 900; 
-}
+.error { color: red; font-weight: 900; }
 @media screen and (min-width: 921px) {
     div.screen { height: 100%; width: 960px; outline: 1px solid #f8f9fa!important; padding: 10px; margin: 10px auto; }
 }

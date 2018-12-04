@@ -1,22 +1,19 @@
 <?php
 
+include 'classes/encryption.php';
+
 class database {
 
-        private static function connection(){
-            
-        // Set up ODBC connection
-    /* Success connection to SQL Database */
-    
-    $dbhost = "localhost"; // this will ususally be 'localhost', but can sometimes differ
-    $dbname = "uwi-connection"; // the name of the database that you are going to use for this project
-    $dbuser = "mayerz"; // the username that you created, or were given, to access your database
+/* ################################## Function used to instantiate the DB connection ################################### */
+
+private static function connection(){
+      
+    $dbhost = "fdb24.awardspace.net"; // this will ususally be 'localhost', but can sometimes differ
+    $dbname = "2890673_bipa"; // the name of the database that you are going to use for this project
+    $dbuser = "2890673_bipa"; // the username that you created, or were given, to access your database
     $dbpass = "M@y3rZT#ch"; // the password that you created, or were given, to access your database
      
     $connection = mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);
-    
-
-
- //   $connection = odbc_connect( $connection_string, $user, $pass );
     
             if (mysqli_connect_errno()) {
                 echo "Calendar is currently under maintenance" . mysqli_connect_error();
@@ -28,9 +25,8 @@ class database {
 
 }
 
+/* ################################## Function used to REGISTER a new user ################################### */
 
-
-        
 public static function registerUser($userInput){
 
     /* Initial call to the database connection METHOD */
@@ -88,61 +84,82 @@ public static function registerUser($userInput){
       
 }
 
-public static function displayAllUsers(){
 
+
+/* ################################## Function used to REGISTER a new user ################################### */
+
+public static function updateUser($userInput, $id){
+
+    /* Initial call to the database connection METHOD */
     $dbConnect = self::connection();
 
-    $userData = array();
-    $users = array();
-    $json = array();
-
-    $query = 'SELECT * FROM members';
+      /*    Example of a PREPARED Statements   */
+     /* Improved Security */
 
     
-    $results = mysqli_query($dbConnect, $query);
+        $query = "INSERT INTO members (username, pwd, f_name, ";
+        $query .= "s_name, m_name, status, DOB, instit_work, ";
+        $query .= "instit_edu, gender, POA, phone, mobile, work, ";
+        $query .= "email, admit_date, resign_date, user_cat, salt) ";
+        $query .= "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ";
+        $query .= "?, ?, ?, ?, ?, ?, ?, ?) WHERE userid = $id";
+    
 
-    if($results){
+        // prepare and bind
+        $stmt = mysqli_stmt_init($dbConnect);
 
-        while($e=$results->fetch_assoc()){
-            $users[]=$e;
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            echo "SQL error";
+        } else {
+            mysqli_stmt_bind_param(
+                $stmt, 
+                "sssssssssssssssssss",
+                $userInput['username'], 
+                $userInput['password'], 
+                $userInput['fname'], 
+                $userInput['sname'], 
+                $userInput['mname'], 
+                $userInput['status'], 
+                $userInput['DOB'], 
+                $userInput['work'], 
+                $userInput['edu'], 
+                $userInput['gender'], 
+                $userInput['POA'], 
+                $userInput['phone'], 
+                $userInput['mobile'], 
+                $userInput['work'], 
+                $userInput['email'], 
+                $userInput['ad'], 
+                $userInput['rd'], 
+                $userInput['membership'],
+                $userInput['salt']  
+            );
+         $results = mysqli_stmt_execute($stmt);
+
+             //   echo "<b>" . $results . "</b>";
+
+     return $results;
+
+
         }
-
-        $userRecords = json_encode($users);
-        $userRecord = json_decode($userRecords, true);
-        $i=0;
-
-        foreach($userRecord as $usr){
-       
-            echo "<span><b>User:</b>" . $usr['username'] . "</span>";
-            echo "<span><b>Contact:</b>" . $usr['email'] . "</span>";
-            echo "<span><b><a href='edit-account?id=" . $usr['userid'] . "'>Edit</a></b></span>";
-            echo "<span><b><a href='delete-account?id=" . $usr['userid'] . "'>Delete</a></b></span><br />";
-
-        }
-
-        return true;
-           
-    }   else {
-
-        die('Connection Failed...');
-    }
-
+      
 }
 
 
-        public static function fetchAllUsers(){
 
+/*  ################################ Function used to fetch ALL User data ################################ */
+
+        public static function fetchAllUsers(){
             $dbConnect = self::connection();
-            
             $userData = array();
             $users = array();
             $json = array();
-            $query = 'SELECT * FROM Users';
-            $results = odbc_exec($dbConnect, $query);
+            $query = 'SELECT * FROM [SchedulerDB].[dbo].[Users]';
+            $results = mysqli_query($dbConnect, $query);
 
             if($results){
 
-                while($e=odbc_fetch_object($results)){
+                while($e=$results->fetch_assoc()){
                     $users[]=$e;
                 }
                 $userRecords = json_encode($users);
@@ -172,8 +189,54 @@ public static function displayAllUsers(){
             }
         }
 
-     /* Functions used to FETCH all Events from the database; then populate the calendar with these records. */
-     public function roomIsAvailable($room_id, $startD, $startT, $endT)
+/*  ################################ Function used to DISPLAY ALL User data within the SYSADMIN page ################################ */
+
+public static function displayAllUsers(){
+
+    $dbConnect = self::connection();
+
+    $userData = array();
+    $users = array();
+    $json = array();
+
+    $query = 'SELECT * FROM members';
+
+    
+    $results = mysqli_query($dbConnect, $query);
+
+    if($results){
+
+        while($e=$results->fetch_assoc()){
+            $users[]=$e;
+        }
+
+        $userRecords = json_encode($users);
+        $userRecord = json_decode($userRecords, true);
+        $i=0;
+
+        foreach($userRecord as $usr){
+                echo "<tr>";
+            echo "<td>" . $usr['f_name'] . "</td>";
+            echo "<td>" . $usr['s_name'] . "</td>";
+            echo "<td>" . $usr['email'] . "</td>";
+            echo "<td><a href='edit-account.php?id=" . $usr['userid'] . "'>Edit</a></td>";
+            echo "<td><a href='delete-account.php?id=" . $usr['userid'] . "'>Delete</a></td>";
+                echo "</tr>";
+        }
+
+        return true;
+           
+    }   else {
+
+        die('Connection Failed...');
+    }
+
+}
+
+
+/* ################################## Function used to Confirm Location Availability ################################### */
+
+     public static function roomIsAvailable($room_id, $startD, $endD, $startT, $endT)
      {
          
          $dbConnect = self::connection();
@@ -181,12 +244,16 @@ public static function displayAllUsers(){
              $data =  array();
              
              $query = "SELECT * FROM Events WHERE roomId='$room_id' ORDER BY eventSD";
-             $result = odbc_exec($dbConnect, $query);
+             $result = mysqli_query($dbConnect, $query);
              
-             if($result) {
+            $no_rows = mysqli_num_rows($result);
+            
+            if($no_rows > 0) {
+             
+           //  if($result) {
                  
                  //foreach($result as $row)
-                 while($e=odbc_fetch_object($result))
+                 while($e=$results->fetch_assoc())
                  {
                      /* Collect of database records as OBJECT */
                      $data[]=$e;
@@ -199,30 +266,52 @@ public static function displayAllUsers(){
                  $json = array();
                  $allEvents = array();
                  $i = 0;
+
                foreach($record as $eventRecord) {
-                     /* Storing our results into an ARRAY. */
-                  //   $json = array(
+                  
+                    $eSD = $eventRecord['eventSD']; // Start dates of previously entered events.
+                    $eED = $eventRecord['eventED']; // End dates of previously entered events.
+
+                    $sD = date("m-d-Y", strtotime("$eSD"));  
+                    $eD = date ("m-d-Y", strtotime("$eSD"));
+
+                    $sD_new = date("m-d-Y", strtotime("$startD"));  //Start and End dates for event to be added to DB
+                    $sD_new = date("m-d-Y", strtotime("$endD"));
+
+
+                    $sT_prev = date("H:i", strtotime("$eSD"));  // Start TIMES of previously entered events.
+                    $eT_prev = date("H:i", strtotime("$eED"));   // End TIMES of previously entered evenets.
+
+
+                    $sT_new = date("H:i", strtotime("$startT"));  //Start and End TIMES for event to be added to DB
+                    $eT_new = date("H:i", strtotime("$endT"));
+
                     
-                    /*        'id'          => $eventRecord['eventId'],
-                         'title'       => $eventRecord['name'],
-                         'description' => $eventRecord['description'],
-                         'start'       => $eventRecord['eventSD'],
-                         'end'         => $eventRecord['eventED']   
-                     );
-                        */
-                                $eSD = $eventRecord['eventSD'];
-                                $eED = $eventRecord['eventED'];
 
-                      $sD = date("m-d-Y", strtotime("$eSD"));  
-                       $sT = date("g:ia", strtotime("$eSD"));
-                        $eT = date("g:ia", strtotime("$eED"));
+                        if($sT_new <= $eT_prev && $sT_prev <= $eT_new && $sD_new == $sD){
+                          
+                            $i++;  
+                                
+                                /*       
+                            echo "Overlap Condition: ";
+                            echo $sD_new . " @" . $sT_new . " to " . $eT_new . " <=> ";
+                            echo $sD . "@" . $sT_prev . " to " . $eT_prev . " = " . $i;
+                            echo "<br />";
+                                    */    
+                            break;
 
-                     if($sD == $startD){
-                        // if($sT == $startT && $startT < $eT){
-                              $i++;
-                       //  }
-                     } 
+                        } else {
 
+                            $i=0;
+                           /*  echo "NO Overlap Condition: ";
+                            echo $sD_new . " @" . $sT_new . " to " . $eT_new . "<=>";
+                            echo $sD . " @" . $sT_prev . " to " . $eT_prev . " | ";
+                            echo "<br />";
+                            */
+
+                        }
+                            
+                        
                  }
                  
               return $i;
@@ -232,31 +321,29 @@ public static function displayAllUsers(){
              
          } else {
              
-             die('Connection Failed...');
-             
+           return 0;  
          }
          
  
      }
 
 
+/* ################################## Function used to FETCH Event Data based on Location. ################################## */
 
-
-         /* Functions used to FETCH all Events from the database; then populate the calendar with these records. */
-    public function fetchDataByRoom($room_id)
-    {
+public function fetchDataByRoom($room_id)
+{
         
         $dbConnect = self::connection();
             
             $data =  array();
             
             $query = "SELECT * FROM Events WHERE roomId='$room_id' ORDER BY eventSD";
-            $result = odbc_exec($dbConnect, $query);
+            $result = mysqli_query($dbConnect, $query);
             
             if($result) {
                 
                 //foreach($result as $row)
-                while($e=odbc_fetch_object($result))
+                while($e=$results->fetch_assoc())
                 {
                     /* Collect of database records as OBJECT */
                     $data[]=$e;
@@ -270,21 +357,31 @@ public static function displayAllUsers(){
                 $allEvents = array();
                 $i = 0;
               foreach($record as $eventRecord) {
-                    /* Storing our results into an ARRAY. */
-                    $json = array(
-                        'id'          => $eventRecord['eventId'],
-                        'title'       => $eventRecord['name'],
-                        'description' => $eventRecord['description'],
-                        'start'       => $eventRecord['eventSD'],
-                        'end'         => $eventRecord['eventED']   
-                    );
-    
+                     /* Storing our results into an ARRAY. */
+        
+                     $userHost = self::fetchUserByUserId($eventRecord["hostId"]);
+                  
+                     $myfn = $userHost[0]["fname"];
+                     $mysn = $userHost[0]["sname"];
+        
+                        $json = array(
+                            'id'          => $eventRecord['eventId'],
+                            'title'       => $eventRecord['name'],
+                            'hostSname'   => $mysn,  
+                            'hostFname'   => $myfn,
+                            'description' => $eventRecord['description'],
+                            'start'       => $eventRecord['eventSD'],
+                            'end'         => $eventRecord['eventED']   
+                        );
                     // Adds each array into the container array
                     array_push($allEvents, $json);
-   
+        
                     
                 }
                 
+           //     print_r($allEvents);
+             //   exit;
+        
                 return json_encode($allEvents);
             
          //   echo 'We are connected...';
@@ -295,148 +392,280 @@ public static function displayAllUsers(){
             die('Connection Failed...');
             
         }
-        
 
+
+}
+
+
+/* ################################## Function used to FETCH Event Data based on HOST. ################################## */
+
+public static function fetchDataByHost($host_id)
+{
+        
+        $dbConnect = self::connection();
+            
+            $data =  array();
+            
+            $query = "SELECT * FROM Events WHERE hostId='$host_id' ORDER BY eventSD";
+            $result = mysqli_query($dbConnect, $query);
+            
+            
+            $no_rows = mysqli_num_rows($result);
+            
+            if($no_rows > 0) {
+                
+                //foreach($result as $row)
+                while($e=$result->fetch_assoc())
+                {
+                    /* Collect of database records as OBJECT */
+                    $data[]=$e;
+                }
+                
+                /* Conversion of database records as OBJECT to STRING */
+                $records = json_encode($data);
+                /* Conversion of database records as STRING to ASSOCIATIVE ARRAY/ARRAY of ARRAYS */
+                $record = json_decode($records, true);
+                $json = array();
+                $allEvents = array();
+                $i = 0;
+              foreach($record as $eventRecord) {
+                     /* Storing our results into an ARRAY. */
+        
+                     $userHost = self::fetchUserByUserId($eventRecord["hostId"]);
+                  
+                     $myfn = $userHost[0]["fname"];
+                     $mysn = $userHost[0]["sname"];
+        
+                        $json = array(
+                            'id'          => $eventRecord['eventId'],
+                            'title'       => $eventRecord['name'],
+                            'hostSname'   => $mysn,  
+                            'hostFname'   => $myfn,
+                            'description' => $eventRecord['description'],
+                            'start'       => $eventRecord['eventSD'],
+                            'end'         => $eventRecord['eventED']   
+                        );
+                    // Adds each array into the container array
+                    array_push($allEvents, $json);
+        
+                    
+                }
+                
+           //     print_r($allEvents);
+             //   exit;
+        
+                return json_encode($allEvents);    
+            
+        } else {
+            $data =  array();
+                return $data;
+            
+        } 
+
+}
+
+
+/* ################################## Function used to FETCH ALL Usernames from DB. ################################## */
+
+public static function fetchAllUsernames(){
+          
+          
+    $dbConnect = self::connection();
+    $userData = array();
+    $users = array();
+    $query = 'SELECT * FROM members';
+    $results = mysqli_query($dbConnect, $query);
+
+    if($results){
+
+        while($e=$results->fetch_assoc()){
+            $users[]=$e;
+        }
+        $userRecords = json_encode($users);
+        $userRecord = json_decode($userRecords, true);
+        $i=0;
+        foreach($userRecord as $usr){
+            $json = array(
+               'uname' =>  $usr['username']
+            );
+            array_push($userData, $json);
+        }
+            // return json_encode($userData);
+                return $userData;
+
+    }   else {
+
+        die('Connection Failed...');
+    }
+    
+}
+
+
+
+
+/* ################################## Function used to UPDATE a specific user based on their Username. ################################## */
+
+public static function editUserData($userRecord)
+{
+     /* Initial call to the database connection METHOD */
+     $dbConnect = self::connection();
+
+     $sql = "INSERT INTO members (name, description, eventSD, eventED, roomId, userId, hostId, IsPublic, RecurrenceType) ";
+     $sql .= "VALUES ('$title', '$description', convert(datetime,'$startD'), convert(datetime,'$endD'), $roomId, $userId, $hostId, 1, 'N')";
+
+/* !!!   Function NOT COMPLETED  !!!  */
+
+
+}
+
+
+
+/* ################################## Function used to FETCH a specific user based on their Username. ################################## */
+
+public static function fetchUserByUsername($username){
+         
+ 
+    /* Initial call to the database connection METHOD */
+    $dbConnect = self::connection();
+
+    $userData = array();
+    $users = array();
+    $query = "SELECT * FROM members ";
+    $query .= "WHERE username = '$username' ";
+
+    $results = mysqli_query($dbConnect, $query);
+
+    if($results){
+
+        while($e=$results->fetch_assoc()){
+            $users[]=$e;
+        }
+        $userRecords = json_encode($users);
+        $userRecord = json_decode($userRecords, true);
+        $i=0;
+        foreach($userRecord as $usr){
+            $json = array(
+                'id'    =>  $usr['userid'],
+                'fname' =>  $usr['f_name'],
+                'sname' =>  $usr['s_name'],
+                'uname' =>  $usr['username'],
+                'email' =>  $usr['email'],
+                'phone' =>  $usr['phone'],
+                'mobile' => $usr['mobile'],
+                'pwd'   => $usr['pwd'],
+                'salt'  => $usr['salt']
+            );
+            array_push($userData, $json);
+        }
+
+            // return json_encode($userData);
+                return $userData;
+
+    }   else {
+     
+        die('Connection Failed...');
     }
 
+}
 
-        public static function fetchAllUsernames(){
-          
-          
-            $dbConnect = self::connection();
-            $userData = array();
-            $users = array();
-            $query = 'SELECT * FROM [SchedulerDB].[dbo].[Users]';
-            $results = odbc_exec($dbConnect, $query);
 
-            if($results){
+/* ################################## Function used to FETCH User data based on their USERID. ################################## */
 
-                while($e=odbc_fetch_object($results)){
-                    $users[]=$e;
-                }
-                $userRecords = json_encode($users);
-                $userRecord = json_decode($userRecords, true);
-                $i=0;
-                foreach($userRecord as $usr){
-                    $json = array(
-                    //    'id'    =>  $usr['userId'],
-                     //   'fname' =>  $usr['userFN'],
-                     //   'sname' =>  $usr['userSN'],
-                        'uname' =>  $usr['username'],
-                     //   'email' =>  $usr['email'],
-                     //   'phone' =>  $usr['userPhone'],
-                     //   'mobile' => $usr['userMobile'],
-                     //   'role'  => $usr['userRole'],
-                     //   'pwd'   => $usr['userPwd'],
-                     //   'salt'  => $usr['salt']
-                    );
-                    array_push($userData, $json);
-                }
-                    // return json_encode($userData);
-                        return $userData;
+public static function fetchUserByUserId($userId){
+           
+           
+    /* Initial call to the database connection METHOD */
+    $dbConnect = self::connection();
 
-            }   else {
+    $userData = array();
+    $users = array();
+    $query = "SELECT * FROM members ";
+    $query .= "WHERE userid = '$userId' ";
 
-                die('Connection Failed...');
-            }
+    $results = mysqli_query($dbConnect, $query);
+
+    if($results){
+
+        while($e=$results->fetch_assoc()){
+            $users[]=$e;
         }
 
-        public static function editUserData($title, $description, $startD, $endD, $roomId, $userId, $hostId)
-        {
-             /* Initial call to the database connection METHOD */
-             $dbConnect = self::connection();
-
-             $sql = "INSERT INTO [SchedulerDB].[dbo].[Users] (name, description, eventSD, eventED, roomId, userId, hostId, IsPublic, RecurrenceType) ";
-             $sql .= "VALUES ('$title', '$description', convert(datetime,'$startD'), convert(datetime,'$endD'), $roomId, $userId, $hostId, 1, 'N')";
-      
-
-
+        $userRecords = json_encode($users);
+        $userRecord = json_decode($userRecords, true);
+        $i=0;
+        foreach($userRecord as $usr){
+            $json = array(
+                'id'    =>  $usr['userid'],
+                'fname' =>  $usr['f_name'],
+                'sname' =>  $usr['s_name'],
+                'uname' =>  $usr['username'],
+                'email' =>  $usr['email'],
+                'phone' =>  $usr['phone'],
+                'mobile' => $usr['mobile'],
+                'pwd'   => $usr['pwd'],
+                'salt'  => $usr['salt']
+        );
+            array_push($userData, $json);
         }
 
-        public static function retrieveUsersByUsername($username){
-            
-            /* Initial call to the database connection METHOD */
-            $dbConnect = self::connection();
+          //   return json_encode($userData);
+                return $userData;
 
-            $query = "SELECT COUNT(*) AS Results FROM members ";
-            $query .= "WHERE username = '$username' ";
-            
+    }   else {
+     
+        die('Connection Failed...');
+    }
 
-            $results = mysqli_query($dbConnect, $query);
+}
 
-            
-            if($results){
 
-                while($e=$results->fetch_assoc()){
-                    $users[]=$e;
-                }
 
-                $userRecords = json_encode($users);
-                $userRecord = json_decode($userRecords, true);
+/* ################################## Function used to CHECK the existence of a specific User data based on their USERID. ################################## */
 
+public static function retrieveUsersByUsername($username){
+           
+           
+    /* Initial call to the database connection METHOD */
+    $dbConnect = self::connection();
+
+    $userData = array();
+    $users = array();
+    $query = "SELECT COUNT(*) AS Results FROM members ";
+    $query .= "WHERE username = '$username' ";
+
+    $results = mysqli_query($dbConnect, $query);
+
+    if($results){
+
+        while($e=$results->fetch_assoc()){
+            $users[]=$e;
+        }
+
+        $userRecords = json_encode($users);
+        $userRecord = json_decode($userRecords, true);
+        
+          //   return json_encode($userData);
                 return $userRecord;
-            }
 
-        }
+    }   else {
+     
+        die('Connection Failed...');
+    }
 
+}
 
-        public static function fetchUserByUsername($username){
-         
+/* ################################## Function used to FETCH a specific user's name ONLY. ################################## */
+
+public static function fetchUserFnLName($userId){
+           
+           
             /* Initial call to the database connection METHOD */
             $dbConnect = self::connection();
         
             $userData = array();
             $users = array();
             $query = "SELECT * FROM members ";
-            $query .= "WHERE username = '$username' ";
-
-            $results = mysqli_query($dbConnect, $query);
-
-            if($results){
-
-                while($e=$results->fetch_assoc()){
-                    $users[]=$e;
-                }
-                $userRecords = json_encode($users);
-                $userRecord = json_decode($userRecords, true);
-                $i=0;
-
-                foreach($userRecord as $usr){
-                    $json = array(
-                        'id'    =>  $usr['userid'],
-                        'fname' =>  $usr['f_name'],
-                        'sname' =>  $usr['s_name'],
-                        'uname' =>  $usr['username'],
-                        'email' =>  $usr['email'],
-                        'phone' =>  $usr['phone'],
-                        'mobile' => $usr['mobile'],
-                        'pwd'   => $usr['pwd']
-                    );
-                    array_push($userData, $json);
-                }
-
-                    // return json_encode($userData);
-                        return $userData;
-
-            }   else {
-             
-                die('Connection Failed...');
-            }
-
-        }
-
-            
-        public static function fetchUserByUserId($userId){
-           
-           
-            /* Initial call to the database connection METHOD */
-            $dbConnect = self::connection();
-        
-            $userData = array();
-            $users = array();
-
-            $query = "SELECT * FROM Members ";
-            $query .= "WHERE userid = '$userId' ";
+            $query .= "WHERE userid = '$userid' ";
 
             $results = mysqli_query($dbConnect, $query);
 
@@ -449,26 +678,9 @@ public static function displayAllUsers(){
                 $userRecord = json_decode($userRecords, true);
                 $i=0;
                 foreach($userRecord as $usr){
-                    $json = array(
-                        'uname' => $usr['username'],
-                        'fname' =>  $usr['f_name'],
-                        'sname' =>  $usr['s_name'],
-                        'mname' =>  $usr['m_name'],
-                        'email' =>  $usr['email'],
-                        'phone' =>  $usr['userPhone'],
-                        'mobile' => $usr['userMobile'],
-                        'work'  =>  $usr['work'],
-                        'dob'  => $usr['DOB'],
-                        'poa'   => $usr['POA'],
-                        'cat'  => $usr['user_cat'],
-                        'work-place' => $usr['instit_work'],
-                        'edu-place' => $usr['instit_edu']
-
+                    $json = array( $usr['userFN'], $usr['userSN']
                 );
                     array_push($userData, $json);
-                
-                    
-
                 }
 
                     // return json_encode($userData);
@@ -479,22 +691,23 @@ public static function displayAllUsers(){
                 die('Connection Failed...');
             }
 
-        }
+}
 
 
+/* ################################## Function used to FETCH user's secure SALT HASH to facilitate site login. ################################## */
 
-        public static function fetchUserSalt($username){
+public static function fetchUserSalt($username){
           
-          
-            /* Initial call to the database connection METHOD */
-            $dbConnect = self::connection();
-        
-            $userData = array();
-            $users = array();
-            $query = "SELECT * FROM members ";
-            $query .= "WHERE username = '$username' ";
+  
+    /* Initial call to the database connection METHOD */
+    $dbConnect = self::connection();
 
-            $results = mysqli_query($dbConnect, $query);
+    $userData = array();
+    $users = array();
+    $query = "SELECT * FROM members ";
+    $query .= "WHERE username = '$username' ";
+
+    $results = mysqli_query($dbConnect, $query);
 
             if($results){
 
@@ -527,9 +740,11 @@ public static function displayAllUsers(){
                 die('Connection Failed...');
             }
 
-        }
+}
      
-        public static function fetchEventById($eventId){
+/* ################################## Function used to FETCH a SPECIFIC event Record based on its ID. ################################## */
+
+public static function fetchEventById($eventId){
         
         
             /* Initial call to the database connection METHOD */
@@ -537,14 +752,14 @@ public static function displayAllUsers(){
         
             $userData = array();
             $users = array();
-            $query = "SELECT * FROM [SchedulerDB].[dbo].[Events] ";
+            $query = "SELECT * FROM Events ";
             $query .= "WHERE eventId = '$eventId' ";
 
-            $results = odbc_exec($dbConnect, $query);
+            $results = mysqli_query($dbConnect, $query);
 
             if($results){
 
-                while($e=odbc_fetch_object($results)){
+                while($e=$results->fetch_assoc()){
                     $users[]=$e;
                 }
                 $userRecords = json_encode($users);
@@ -574,21 +789,95 @@ public static function displayAllUsers(){
                 die('Connection Failed...');
             }
 
+}
+
+
+/* ################################## Function used to FETCH All event data to be presented via the Calendar UI. ################################## */
+
+public function fetchData()
+{
+
+ /* Initial call to the database connection METHOD */
+ $dbConnect = self::connection();
+
+    
+    $data = array();
+    
+    $query = 'SELECT * FROM Events ORDER BY eventSD';
+    $result = mysqli_query($dbConnect, $query);
+    
+    if($result){
+        
+        //foreach($result as $row)
+        while($e=$results->fetch_assoc())
+        {
+            /* Collect of database records as OBJECT */
+            $data[]=$e;
         }
+        
+        /* Conversion of database records as OBJECT to STRING */
+        $records = json_encode($data);
+        /* Conversion of database records as STRING to ASSOCIATIVE ARRAY/ARRAY of ARRAYS */
+        $record = json_decode($records, true);
+        
+        $allEvents = array();
+        $json = array();
+        $userHost = array();
+    
+        for($i=0; $i<count($record); $i++){
+          
+            if(!empty($record[$i]['hostId'])){
+
+                $userHost = array();
+
+                $userHost = self::fetchUserByUserId($record[$i]['hostId']);
+           //     $userHost = json_encode($userHost);
+
+                $myfn = $userHost[0]['fname'];
+                $mysn = $userHost[0]['sname'];
+
+            }
+           
+            $json = array(
+                'id'          => $record[$i]['eventId'],
+                'title'       => $record[$i]['name'],
+                'hostSname'   => "$mysn",  
+                'hostFname'   => "$myfn",
+                'description' => $record[$i]['description'],
+                'start'       => $record[$i]['eventSD'],
+                'end'         => $record[$i]['eventED']   
+            );     
+
+  
+                      // Adds each array into the container array
+            array_push($allEvents, $json);
+
+        }
+
+         return json_encode($allEvents);
+    
+        } else {
+            
+            die('Connection Failed...');
+            
+        }
+
+
+}
+
+
+/* ################################## Function used to AUTHORIZE User Access to the site. ################################## */
 
      public static function authorizeUser($username, $password){
             
             $dbConnect = self::connection();
           
-            // SELECT userId FROM [Users] WHERE userPwd=@userPwd AND username=@username
                 $query = "SELECT * FROM members "; 
                 $query .= "WHERE pwd = '$password' ";
                 $query .= "ANd username = '$username' ";
             
             $userData = array();
             $users = array();
-       //     $query = "SELECT * FROM Users ";
-       //     $query .= "WHERE username = '$usr' ";
 
             $results = mysqli_query($dbConnect, $query);
                 
@@ -609,15 +898,12 @@ public static function displayAllUsers(){
                         'email' =>  $usr['email'],
                         'phone' =>  $usr['phone'],
                         'mobile' => $usr['mobile'],
+                        'role'  => $usr['role'],
                         'pwd'   => $usr['pwd']
                     );
                     array_push($userData, $json);
                 }
 
-                    // return json_encode($userData);
-                       
-                  //  print_r($userData);
-                  //      exit;
                     return $userData;
             }   else {
              
@@ -628,5 +914,6 @@ public static function displayAllUsers(){
 
 
 }
+
 
 ?>
