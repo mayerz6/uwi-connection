@@ -1,7 +1,6 @@
 <?php session_start(); ?>
 <?php ob_start(); ?>
 
-<?php include 'classes/connect.php' ?>
 <?php  include 'classes/db.php';  ?>
 
 
@@ -168,44 +167,61 @@ $_SESSION['eTime'] = $eventET;
    $end_Date = $eventED . " " . $eventET;
 
          
-         $i = database::roomIsAvailable($roomId, $eventSD, $eventED, $eventST, $eventET);
+         $i = $dbConnect->roomIsAvailable($roomId, $eventSD, $eventED, $eventST, $eventET);
 
       //   exit;
   //   echo 'We are connected...';
      
             if($i==0){
 
+              $eventData = array(
+                'name' => $name,
+                'description' => $description,
+                'startDate' => $start_Date,
+                'endDate'   => $end_Date,
+                'userId'    => $userId,
+                'hostId'    => $hostId
+              );
                 
-        $query = "INSERT INTO Events (name, description, eventSD, eventED, userId, hostId, IsPublic, RecurrenceType) ";
-        $query .= "VALUES('$name', '$description', convert('$start_Date', datetime), convert('$end_Date', datetime), '$userId', '$hostId', 1, 'N')";
+        // $query = "INSERT INTO Events (name, description, eventSD, eventED, userId, hostId, IsPublic, RecurrenceType) ";
+        // $query .= "VALUES('$name', '$description', convert('$start_Date', datetime), convert('$end_Date', datetime), '$userId', '$hostId', 1, 'N')";
 
         // Code for testing...  
-       
+       $num = $dbConnect->addEventData($eventData);
+
+
        // print_r($query); exit;
 
-        $results = mysqli_query($connection, $query);
+        // $results = mysqli_query($connection, $query);
+              if($num){
 
-        unset($_SESSION['eName']);
-        unset($_SESSION['eDes']);
-        unset($_SESSION['sDate']);
-        unset($_SESSION['eDate']);
-        unset($_SESSION['sTime']);
-        unset($_SESSION['eTime']);
-        
-          $response_error = "msg-success";
-          
-          
-          $connection->close();
-          
-          header("location: user-scheduler.php");
+                unset($_SESSION['eName']);
+                unset($_SESSION['eDes']);
+                unset($_SESSION['sDate']);
+                unset($_SESSION['eDate']);
+                unset($_SESSION['sTime']);
+                unset($_SESSION['eTime']);
+                
+                  $response_error = "msg-success";
+                  
+                  
+                  $connection->close();
+                  
+                  header("location: user-scheduler.php");
+
+              } else{
+
+                $user_error = "error";
+                $response_error = "error";
+
+              }
+       
           
         } else {
 
         $user_error = "error";
          $response_error = "error";
 
-
-                 $connection->close();
         }
 
 

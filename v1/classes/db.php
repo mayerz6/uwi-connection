@@ -1,24 +1,50 @@
 <?php
 
+include 'classes/core.php';
 include 'classes/encryption.php';
+
 
 class database {
 
+  /* Variable used to store a STATIC instance of a database connection. */
+  private static $_connection = null;
+  private $_pdo,
+          $_query,
+          $_error = false,
+          $_results,
+          $_count = 0;
+
 /* ################################## Function used to instantiate the DB connection ################################### */
+
+public static function getInstance(){
+    if(!isset(self::$_connection)){
+      // self::$_connection = new db();
+       self::$_connection = self::connection();
+    }
+    return self::$_connection;
+}
+
+
+
 
 private static function connection(){
       
-    $dbhost = "fdb24.awardspace.net"; // this will ususally be 'localhost', but can sometimes differ
-    $dbname = "2890673_bipa"; // the name of the database that you are going to use for this project
-    $dbuser = "2890673_bipa"; // the username that you created, or were given, to access your database
-    $dbpass = "M@y3rZT#ch"; // the password that you created, or were given, to access your database
+    $dbhost = Core::get('testServer/host'); 
+    $dbname = Core::get('testServer/db');
+    $dbuser = Core::get('testServer/username');
+    $dbpass = Core::get('testServer/password');
+
+    // $dbhost = "fdb24.awardspace.net"; // this will ususally be 'localhost', but can sometimes differ
+    // $dbname = "2890673_bipa"; // the name of the database that you are going to use for this project
+    // $dbuser = "2890673_bipa"; // the username that you created, or were given, to access your database
+    // $dbpass = "M@y3rZT#ch"; // the password that you created, or were given, to access your database
      
     $connection = mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);
     
             if (mysqli_connect_errno()) {
                 echo "Calendar is currently under maintenance" . mysqli_connect_error();
             } else { 
-               //  echo "Successful Connection!!!!";
+            //     echo "Successful Connection!!!!";
                     }
 
             return $connection;
@@ -30,7 +56,7 @@ private static function connection(){
 public static function registerUser($userInput){
 
     /* Initial call to the database connection METHOD */
-    $dbConnect = self::connection();
+    $dbConnect = self::getInstance();
 
       /*    Example of a PREPARED Statements   */
      /* Improved Security */
@@ -91,7 +117,7 @@ public static function registerUser($userInput){
 public static function updateUser($userInput, $id){
 
     /* Initial call to the database connection METHOD */
-    $dbConnect = self::connection();
+    $dbConnect = self::getInstance();
 
       /*    Example of a PREPARED Statements   */
      /* Improved Security */
@@ -150,7 +176,7 @@ public static function updateUser($userInput, $id){
 /*  ################################ Function used to fetch ALL User data ################################ */
 
         public static function fetchAllUsers(){
-            $dbConnect = self::connection();
+            $dbConnect = self::getInstance();
             $userData = array();
             $users = array();
             $json = array();
@@ -193,7 +219,7 @@ public static function updateUser($userInput, $id){
 
 public static function displayAllUsers(){
 
-    $dbConnect = self::connection();
+    $dbConnect = self::getInstance();
 
     $userData = array();
     $users = array();
@@ -239,7 +265,7 @@ public static function displayAllUsers(){
      public static function roomIsAvailable($room_id, $startD, $endD, $startT, $endT)
      {
          
-         $dbConnect = self::connection();
+         $dbConnect = self::getInstance();
              
              $data =  array();
              
@@ -253,7 +279,7 @@ public static function displayAllUsers(){
            //  if($result) {
                  
                  //foreach($result as $row)
-                 while($e=$results->fetch_assoc())
+                 while($e=$result->fetch_assoc())
                  {
                      /* Collect of database records as OBJECT */
                      $data[]=$e;
@@ -333,7 +359,7 @@ public static function displayAllUsers(){
 public function fetchDataByRoom($room_id)
 {
         
-        $dbConnect = self::connection();
+        $dbConnect = self::getInstance();
             
             $data =  array();
             
@@ -343,7 +369,7 @@ public function fetchDataByRoom($room_id)
             if($result) {
                 
                 //foreach($result as $row)
-                while($e=$results->fetch_assoc())
+                while($e=$result->fetch_assoc())
                 {
                     /* Collect of database records as OBJECT */
                     $data[]=$e;
@@ -397,12 +423,47 @@ public function fetchDataByRoom($room_id)
 }
 
 
+
+/* ################################## Function used to FETCH Event Data based on Location. ################################## */
+
+public function addEventData($eventData)
+{
+        
+        $dbConnect = self::getInstance();
+            
+            $data =  array();
+            $name = $eventData['name'];
+            $description = $eventData['description'];
+            $start_Date = $eventData['startDate'];
+            $end_Date = $eventData['endDate'];
+            $userId = $eventData['userId'];
+            $hostId = $eventData['hostId'];
+            
+            $query = "INSERT INTO Events (name, description, eventSD, eventED, userId, hostId, IsPublic, RecurrenceType) ";
+            $query .= "VALUES('$name', '$description', convert('$start_Date', datetime), convert('$end_Date', datetime), '$userId', '$hostId', 1, 'N')";
+    
+            $result = mysqli_query($dbConnect, $query);
+
+            if($result) {
+                return 1;
+                
+        } else {
+            
+            die('Connection Failed...');
+            
+        }
+
+
+}
+
+
+
 /* ################################## Function used to FETCH Event Data based on HOST. ################################## */
 
 public static function fetchDataByHost($host_id)
 {
         
-        $dbConnect = self::connection();
+        $dbConnect = self::getInstance();
             
             $data =  array();
             
@@ -470,7 +531,7 @@ public static function fetchDataByHost($host_id)
 public static function fetchAllUsernames(){
           
           
-    $dbConnect = self::connection();
+    $dbConnect = self::getInstance();
     $userData = array();
     $users = array();
     $query = 'SELECT * FROM members';
@@ -508,7 +569,7 @@ public static function fetchAllUsernames(){
 public static function editUserData($userRecord)
 {
      /* Initial call to the database connection METHOD */
-     $dbConnect = self::connection();
+     $dbConnect = self::getInstance();
 
      $sql = "INSERT INTO members (name, description, eventSD, eventED, roomId, userId, hostId, IsPublic, RecurrenceType) ";
      $sql .= "VALUES ('$title', '$description', convert(datetime,'$startD'), convert(datetime,'$endD'), $roomId, $userId, $hostId, 1, 'N')";
@@ -526,7 +587,7 @@ public static function fetchUserByUsername($username){
          
  
     /* Initial call to the database connection METHOD */
-    $dbConnect = self::connection();
+    $dbConnect = self::getInstance();
 
     $userData = array();
     $users = array();
@@ -560,7 +621,8 @@ public static function fetchUserByUsername($username){
 
             // return json_encode($userData);
                 return $userData;
-
+                    print_r($userData);
+                    exit();
     }   else {
      
         die('Connection Failed...');
@@ -575,7 +637,7 @@ public static function fetchUserByUserId($userId){
            
            
     /* Initial call to the database connection METHOD */
-    $dbConnect = self::connection();
+    $dbConnect = self::getInstance();
 
     $userData = array();
     $users = array();
@@ -626,7 +688,7 @@ public static function retrieveUsersByUsername($username){
            
            
     /* Initial call to the database connection METHOD */
-    $dbConnect = self::connection();
+    $dbConnect = self::getInstance();
 
     $userData = array();
     $users = array();
@@ -660,12 +722,12 @@ public static function fetchUserFnLName($userId){
            
            
             /* Initial call to the database connection METHOD */
-            $dbConnect = self::connection();
+            $dbConnect = self::getInstance();
         
             $userData = array();
             $users = array();
             $query = "SELECT * FROM members ";
-            $query .= "WHERE userid = '$userid' ";
+            $query .= "WHERE userid = '$userId' ";
 
             $results = mysqli_query($dbConnect, $query);
 
@@ -700,7 +762,7 @@ public static function fetchUserSalt($username){
           
   
     /* Initial call to the database connection METHOD */
-    $dbConnect = self::connection();
+    $dbConnect = self::getInstance();
 
     $userData = array();
     $users = array();
@@ -748,7 +810,7 @@ public static function fetchEventById($eventId){
         
         
             /* Initial call to the database connection METHOD */
-            $dbConnect = self::connection();
+            $dbConnect = self::getInstance();
         
             $userData = array();
             $users = array();
@@ -798,7 +860,7 @@ public function fetchData()
 {
 
  /* Initial call to the database connection METHOD */
- $dbConnect = self::connection();
+ $dbConnect = self::getInstance();
 
     
     $data = array();
@@ -809,7 +871,7 @@ public function fetchData()
     if($result){
         
         //foreach($result as $row)
-        while($e=$results->fetch_assoc())
+        while($e=$result->fetch_assoc())
         {
             /* Collect of database records as OBJECT */
             $data[]=$e;
@@ -870,7 +932,7 @@ public function fetchData()
 
      public static function authorizeUser($username, $password){
             
-            $dbConnect = self::connection();
+            $dbConnect = self::getInstance();
           
                 $query = "SELECT * FROM members "; 
                 $query .= "WHERE pwd = '$password' ";

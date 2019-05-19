@@ -87,7 +87,7 @@ if($_SESSION){
 
                <p class="text">
 
-                    <b>Actions: &nbsp;</b><a href="calendar.php">View Our Calendar</a></b>
+                    <b>Actions: &nbsp;</b><a href="register.php">Register</a> as a member!</b>
                     &nbsp;|&nbsp; <b><a href="index.php">Log In</a></b>
                
                 </p>
@@ -103,7 +103,7 @@ if($_SESSION){
                     <img class="logout-banner" height="180px;" src="assets/images/calendar.png" />
                     <br />
                     <br />
-                      <p><a href="index.php"><b>Register</b></a> Now!</p>
+                      <p><a href="register.php"><b>Register</b></a> Now!</p>
                 </div>
                 
                 <div class="col-md-6 section-line">

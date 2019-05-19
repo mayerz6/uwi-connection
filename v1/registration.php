@@ -3,7 +3,6 @@
 
 
 <?php include 'classes/db.php'; ?>
-<?php // include 'classes/encryption.php'; ?>
 
 <?php
 

@@ -53,7 +53,7 @@ $userData = $userConnect->fetchUserByUsername($_SESSION['username']);
       <li class="nav-item">
         <a class="nav-link" href="about.php">About</a>
       </li>
-       <?php if($_SESSION['role'] == "Administrator") { ?>
+       <?php if(isset($_SESSION['role']) && $_SESSION['role'=="Administrator"]) { ?>
        <li class="nav-item">
         <a class="nav-link" href="sysadmin.php">Manage Accounts</a>
 	  </li>
