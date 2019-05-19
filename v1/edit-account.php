@@ -1,34 +1,35 @@
 <?php session_start(); ?>
 <?php ob_start(); ?>
 
-<?php include 'classes/connect.php';  ?>
 <?php include 'classes/db.php';  ?>
 
-
-<?php  if(($_SESSION['id'] == 31) && ($_GET['id'])){
-
-   
-
-    $dbConnect = new database;
-    $dataRecord = $dbConnect->fetchUserByUserId($_GET['id']);
-    $userData = array();
-
-    $records = mysqli_num_rows($dataRecord);
-
-    if(!empty($records)){
-
-        $userData = array(
-          'id' => $records[0]['id'],
-          'fname' => $records[0]['fname'],
-          'sname' => $records[0]['sname'],
-          'uname' => $records[0]['uname'],
-          'email' => $records[0]['email'],
-          'phone' => $records[0]['phone'],
-          'mobile' => $records[0]['mobile']
-        );
+<?php if(($_SESSION['id'] == 19) && ($_GET['id'])){
 
 
-        /* We MUST sanitize our input fields for SECURITY purposes. */
+$dbConnect = new database;
+$dataRecord = $dbConnect->fetchUserByUserId($_GET['id']);
+$userData = array();
+
+// print_r($dataRecord);
+// exit;
+
+// $records = mysqli_num_rows($dataRecord);
+
+if(!empty($dataRecord)){
+
+    $userData = array(
+      'id' => $dataRecord[0]['id'],
+      'fname' => $dataRecord[0]['fname'],
+      'sname' => $dataRecord[0]['sname'],
+      'uname' => $dataRecord[0]['uname'],
+      'email' => $dataRecord[0]['email'],
+      'phone' => $dataRecord[0]['phone'],
+      'mobile' => $dataRecord[0]['mobile']
+    );
+
+    if(isset($_POST['submit'])) {
+        
+/* We MUST sanitize our input fields for SECURITY purposes. */
   $fname = filter_var($f_name, FILTER_SANITIZE_STRING);
   $sname = filter_var($s_name, FILTER_SANITIZE_STRING);
   $mname = filter_var($m_name, FILTER_SANITIZE_STRING);
@@ -45,54 +46,59 @@
 
   $dob = date("Y-m-d", strtotime("$dob"));
 
-
 /* Call meant to verify if a requested USERNAME already exists. */
 $checkUser = $dbConnect->retrieveUsersByUsername($username);
+
 // Code for testing...  
-         // echo $checkUser[0]['Results']; exit;
+// echo $checkUser[0]['Results']; exit;
 
-  if($checkUser[0]['Results'] != 0){
+         if($checkUser[0]['Results'] != 0){
 
-    $user_error = "error";
+            $user_error = "error";
+        
+          } else {
 
-  } else {
-    
-    $userId = $_GET['id'];
+            $userId = $_GET['id'];
 
-    $userData = array(
+            $userData = array(
+        
+              'fname'     =>  $fname,
+              'sname'     =>  $sname,
+              'mname'     =>  $mname,
+              'DOB'       =>  $dob,
+              'POA'       =>  $address,
+              'gender'    =>  $gender,
+              'empStatus' =>  $empStatus,
+              'email'     =>  $email,
+              'status'    =>  '1',
+              'username'  =>  $username,
+              'phone'     =>  $phone,
+              'work'      =>  $work,
+              'edu'       =>  "College",
+              'mobile'    =>  $mobile,
+              'membership'=>  $membership
+         
+          );
+               
+                $userConfirm = $dbConnect->updateUser($userData, $userId);
 
-      'fname'     =>  $fname,
-      'sname'     =>  $sname,
-      'mname'     =>  $mname,
-      'DOB'       =>  $dob,
-      'POA'       =>  $address,
-      'gender'    =>  $gender,
-      'empStatus' =>  $empStatus,
-      'email'     =>  $email,
-      'status'    =>  '1',
-      'username'  =>  $username,
-      'phone'     =>  $phone,
-      'work'      =>  $work,
-      'edu'       =>  "College",
-      'mobile'    =>  $mobile,
-      'membership'=>  $membership
- 
-  );
-       
-    $userConfirm = $dbConnect->updateUser($userData, $userId);
-
-        if($userConfirm){
+                if($userConfirm){
+                                
+                        header('Location: sysadmin.php');
                         
-                header('Location: sysadmin.php');
-                
-            } else {
-            
-                $server_error = "error";
-                
-            }   
+                    } else {
+                    
+                        $server_error = "error";
+                        
+                    }   
 
-      }
-/* Content rendered once the SESSION viable has been set */  
+
+          }
+    }
+
+
+}
+
 
 ?>
 
@@ -617,20 +623,15 @@ function userRegister(){
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </html>
 
-
-
-
-  
 <?php
 
+   
 /* Content rendered once the SESSION viable has been set */  
- } else {
+} else {
 
     header('Location: index.php');
       exit;
 
   }
-
-}   
 
 ?>

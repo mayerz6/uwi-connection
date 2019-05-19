@@ -1,10 +1,17 @@
 <?php session_start(); ?>
 <?php ob_start(); ?>
 
-
-<?php include 'classes/connect.php';  ?>
 <?php include 'classes/db.php'; ?>
 
+
+<?php
+
+
+$serverError = "default";
+
+if($_SESSION['id']) {
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +20,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="theme-color" content="#000000">
 
-                        <link rel="icon" href="favicon.png">
+        <link rel="icon" href="favicon.png">
 
         <title>BIPA Registry</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -63,96 +70,88 @@
 </nav>
         </header>
 
-
 <?php
 
-$serverError = "default";
 
-if($_SESSION) {
+   
+$userConnect = new database;
+$userEncrypt = new encryption;
 
+$userData = $userConnect->fetchUserByUsername($_SESSION['username']);
 
-    
-    $userConnect = new database;
-    $userEncrypt = new encryption;
-    
-    $userData = $userConnect->fetchUserByUsername($_SESSION['username']);
-    
-    if(isset($_POST['cancel'])) {  
-        header('Location: user-profile.php');
-        exit; }
+if(isset($_POST['cancel'])) {  
+    header('Location: user-profile.php');
+    exit; }
 
 
-    if(isset($_POST['submit'])) {
-    /* Once the user SUMBITS the form, perform the following tasks. */
-                
- 
-    /* Extract all the elements within the $_POST super GLOBAL. */
-        extract($_POST);
-
-          /* We MUST sanitize our input fields for SECURITY purposes. */
-      $fname = filter_var($tbFirstname, FILTER_SANITIZE_STRING);
-      $sname = filter_var($tbSurname, FILTER_SANITIZE_STRING);
-      $username = filter_var($tbUsername, FILTER_SANITIZE_STRING);
-      $email = filter_var($tbEmail, FILTER_VALIDATE_EMAIL);
-      $phone = filter_var($tbPhone, FILTER_SANITIZE_STRING);
-      $mobile = filter_var($tbMobile, FILTER_SANITIZE_STRING);
-    //  $role = filter_var($ddRole, FILTER_SANITIZE_STRING);
-      
-    $recordId = $userData[0]['id'];
-    /*
-    
-        $pwdEncrypt = $userEncrypt->hashPwd($tbLivePwd);
-        $usrSalt = $userData[0]['salt'];
-          $txt =  $pwdEncrypt . "" . $usrSalt; 
-              $usrPwdHash = $userEncrypt->hashPwd($txt);
-
-              $recordUser = $userConnect->authorizeUser($userData[0]['uname'], $usrPwdHash);
-     
-                $pwdEncrypt = $userEncrypt->hashPwd($tbConfirmedPwd);
-                    $usrSalt = $userEncrypt->generateSalt();
-                     $txt =  $pwdEncrypt . "" . $usrSalt; 
-                        $usrPwdHash = $userEncrypt->hashPwd($txt);
-
-    */
-
-            /*    Example of a PREPARED Statements   */
-                /* Improved Security */
-                if(!empty($recordId)){
-
-               $query = "UPDATE members SET ";
-               $query .= "f_name = '$fname', ";
-               $query .= "s_name = '$sname', ";
-               $query .= "username = '$username', ";
-               $query .= "email = '$email', ";
-               $query .= "phone = '$phone', ";
-               $query .= "mobile = '$mobile' ";
-               $query .= "WHERE  userid = '$recordId' ";
-      
-                // Code for testing...  
-                  //  print_r($query); exit;
-
-               $results = mysqli_query($connection, $query);
-
-               if($results) {
-      
-                  header('Location: user-profile.php');
-                        exit;
-
-                    } else {
-                        $serverError = "error";
-                    }
-                
+if(isset($_POST['submit'])) {
+/* Once the user SUMBITS the form, perform the following tasks. */
             
-        } else {
-            $serverError = "error";
-           }
+
+/* Extract all the elements within the $_POST super GLOBAL. */
+    extract($_POST);
+
+      /* We MUST sanitize our input fields for SECURITY purposes. */
+  $fname = filter_var($tbFirstname, FILTER_SANITIZE_STRING);
+  $sname = filter_var($tbSurname, FILTER_SANITIZE_STRING);
+  $username = filter_var($tbUsername, FILTER_SANITIZE_STRING);
+  $email = filter_var($tbEmail, FILTER_VALIDATE_EMAIL);
+  $phone = filter_var($tbPhone, FILTER_SANITIZE_STRING);
+  $mobile = filter_var($tbMobile, FILTER_SANITIZE_STRING);
+//  $role = filter_var($ddRole, FILTER_SANITIZE_STRING);
+  
+$recordId = $userData[0]['id'];
+  $userInput = array(
+    'fname'     => $fname,
+    'sname'     => $sname,
+    'username'  => $username,
+    'email'     => $email,
+    'phone'     => $phone,
+    'mobile'    => $mobile
+  );
+        /*    Example of a PREPARED Statements   */
+            /* Improved Security */
+            if(!empty($recordId)){
+/*
+           $query = "UPDATE members SET ";
+           $query .= "f_name = '$fname', ";
+           $query .= "s_name = '$sname', ";
+           $query .= "username = '$username', ";
+           $query .= "email = '$email', ";
+           $query .= "phone = '$phone', ";
+           $query .= "mobile = '$mobile' ";
+           $query .= "WHERE  userid = '$recordId' ";
+*/      
+          $results = $userConnect->updateUserProfile($userInput, $recordId);
+            // Code for testing...  
+              //  print_r($query); exit;
+
+        //   $results = mysqli_query($connection, $query);
+
+           if($results) {
+  
+              header('Location: user-profile.php');
+                    exit;
+
+                } else {
+                    $serverError = "error";
+                }
+            
+    } else {
+        $serverError = "error";
+       }
 
 }
 
 
+} else {
+
+  header('Location: index.php');
+          exit;
+
+}
+  
 ?>
-
-
 
 <div class="screen">    
 
@@ -218,22 +217,6 @@ if($_SESSION) {
 
          </div>
 
-
-
-
-
-
-<?php
-
-} else {
-
-    header('Location: index.php');
-            exit;
-
-}
-    
-  
-?>
 
 
 

@@ -172,6 +172,45 @@ public static function updateUser($userInput, $id){
 }
 
 
+/* ################################## Function used to REGISTER a new user ################################### */
+
+public static function updateUserProfile($userInput, $recordId){
+
+    /* Initial call to the database connection METHOD */
+    $dbConnect = self::getInstance();
+
+    $fname = $userInput['fname'];
+    $sname = $userInput['sname'];
+    $username = $userInput['username'];
+    $email = $userInput['email'];
+    $phone = $userInput['phone'];
+    $mobile = $userInput['mobile'];
+
+      /* Example of a PREPARED Statements   */
+     /* Improved Security */
+    
+     $query = "UPDATE members SET ";
+     $query .= "f_name = '$fname', ";
+     $query .= "s_name = '$sname', ";
+     $query .= "username = '$username', ";
+     $query .= "email = '$email', ";
+     $query .= "phone = '$phone', ";
+     $query .= "mobile = '$mobile' ";
+     $query .= "WHERE  userid = '$recordId' ";
+
+         $results = mysqli_query($dbConnect, $query);
+
+             //   echo "<b>" . $results . "</b>";
+
+     return $results;
+
+
+        }
+    
+
+
+
+
 
 /*  ################################ Function used to fetch ALL User data ################################ */
 
