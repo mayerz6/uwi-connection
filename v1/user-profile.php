@@ -3,17 +3,14 @@
 
 <?php include 'classes/db.php'; ?>
 
- <?php
+<?php
 
-if($_SESSION){
+if($_SESSION['username']){
 
+  $userConnect = new database;
 
-$userConnect = new database;
-
-$userData = $userConnect->fetchUserByUsername($_SESSION['username']);
-
-?>
-
+  $userData = $userConnect->fetchUserByUsername($_SESSION['username'])
+  ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -53,7 +50,7 @@ $userData = $userConnect->fetchUserByUsername($_SESSION['username']);
       <li class="nav-item">
         <a class="nav-link" href="about.php">About</a>
       </li>
-       <?php if(isset($_SESSION['role']) && $_SESSION['role'=="Administrator"]) { ?>
+       <?php if(isset($_SESSION['role']) && $_SESSION['role'] == "Administrator") { ?>
        <li class="nav-item">
         <a class="nav-link" href="sysadmin.php">Manage Accounts</a>
 	  </li>
@@ -112,11 +109,11 @@ $userData = $userConnect->fetchUserByUsername($_SESSION['username']);
                       </tr>
                       <tr>
                         <td>Membership Level:</td>
-                        <td><?php echo $userData[0]['role'];  ?></td>
+                        <td><?php echo (!empty($userData[0]['role'])) ? $userData[0]['role'] :  " "; ?></td>
                       </tr>
                        <tr>
                         <td>Membership Status:</td>
-                        <td><?php echo $userData[0]['role'];  ?></td>
+                        <td><?php echo (!empty($userData[0]['status'])) ? $userData[0]['status'] : " " ?></td>
                       </tr>
                       
                       <tr>
@@ -161,10 +158,7 @@ $userData = $userConnect->fetchUserByUsername($_SESSION['username']);
 
 ?>
 
-
-
-
-        <footer>&copy; Copyright UWI | All Rights Reservered</footer>
+    <footer>&copy; Copyright UWI | All Rights Reservered</footer>
     
     </body>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
