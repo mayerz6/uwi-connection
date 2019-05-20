@@ -329,11 +329,11 @@ if(isset($_POST['submit'])){
 				</div>			
 				
 				<div class="col-sm-12">
-					<input type="checkbox" class="checkbox" />Sign up for our newsletter
+					<input type="checkbox" class="checkbox" />&nbsp;&nbsp;&nbsp;Sign up for our newsletter
 				</div>
 
 				<div class="col-sm-12">
-					<input type="checkbox" class="checkbox" />Send notifications to this email
+					<input type="checkbox" class="checkbox" />&nbsp;&nbsp;&nbsp;Send notifications to this email
 				</div>		
 
 			
@@ -341,20 +341,27 @@ if(isset($_POST['submit'])){
 		
 			<div class="col-md-6">
 				<h3 class="dark-grey">Terms &amp; Conditions</h3>
-				<p>
-					By clicking on "Register" you agree to The Associations's Code of Conduct for acting as a member of the Barbados ICT Professionals' Association.
+                <p>
+                The Barbados ICT Professionals' Association takes privacy and data protection very seriously.  Your 
+            personal information will only be used in the administration of your BIPA membership account in order to 
+        provide the services you have requested from the association.</p>
+                <p>
+					By clicking <b>"Register"</b> you agree to the Associations's Code of Conduct for acting as a member of the Barbados ICT Professionals' Association.
 				</p>
 				<p>
-                This Code sets out the professional standards required by the Association as a condition of membership. It applies to members of all grades, including 
-                students, and affiliates, and also non members who offer their expertise as part of the Association’s Professional Advice Register. The Code governs your 
-                personal conduct as an individual member of BIPA and not the nature of business or ethics of the relevant authority. It will, therefore, be a matter of 
-                exercising your personal judgement in meeting the Code’s requirements.  Any breach of the Code of Conduct brought to the attention of the Association 
-                will be considered under the Association’s disciplinary procedures. You should also ensure that you notify the Association of any significant violation 
-                of this Code by another BIPA member.</p>
+                This Code governs your personal conduct as an individual member of BIPA and not the nature of business or ethics of the relevant authority.  Any breach of the Code of Conduct brought to the attention of the Association 
+                will be considered under the Association’s disciplinary procedures.</p>
                 
 				
+                
+                <p>If you consent to the association storing your details for the purpuse of adding value to you
+                    as a member of the association please confirm below;
+                </p>
+                <div class="col-sm-12">
+					<input type="checkbox" class="checkbox" />&nbsp;&nbsp;&nbsp;I Consent to these TERMS &amp; Conditions
+                </div>
+                <br />
                 <button name="submit" class="btn btn-primary">Register</button>
-
             </div>
            
 </div>
