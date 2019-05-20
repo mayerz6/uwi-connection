@@ -99,7 +99,6 @@ if(isset($_POST['submit'])){
 
 
   $dob = date("Y-m-d", strtotime("$dob"));
- 
   
     $dbConnect = new database;
     $userEncrypt = new encryption;
@@ -115,7 +114,6 @@ if(isset($_POST['submit'])){
       $user_error = "error";
   
     } else {
-  
 
         if($email != false){
 
@@ -181,7 +179,6 @@ if(isset($_POST['submit'])){
      
 }
 
-
 ?>
 <br />
 <br />
@@ -244,7 +241,8 @@ if(isset($_POST['submit'])){
                                                 <option class="hidden">Employment Status</option>
                                                 <option value="1">Full-Time Employment</option>
                                                 <option value="2">Part-Time Employment</option>
-                                                <option value="3">Unemployed</option>
+                                                <option value="3">Self Employed</option>
+                                                <option value="4">Unemployed</option>
                                             </select>
                                             <div id="employmentErrorMsg"></div>
                                         </div>
@@ -329,11 +327,11 @@ if(isset($_POST['submit'])){
 				</div>			
 				
 				<div class="col-sm-12">
-					<input type="checkbox" class="checkbox" />&nbsp;&nbsp;&nbsp;Sign up for our newsletter
+					<input name ="checkNewsLetter" type="checkbox" class="checkbox" />&nbsp;&nbsp;&nbsp;Sign up for our newsletter
 				</div>
 
 				<div class="col-sm-12">
-					<input type="checkbox" class="checkbox" />&nbsp;&nbsp;&nbsp;Send notifications to this email
+					<input name="checkEmailNoti" type="checkbox" class="checkbox" />&nbsp;&nbsp;&nbsp;Send notifications to this email
 				</div>		
 
 			
@@ -358,7 +356,8 @@ if(isset($_POST['submit'])){
                     as a member of the association please confirm below;
                 </p>
                 <div class="col-sm-12">
-					<input type="checkbox" class="checkbox" />&nbsp;&nbsp;&nbsp;I Consent to these TERMS &amp; Conditions
+					<input name="checkConsent" type="checkbox" class="checkbox" />&nbsp;&nbsp;&nbsp;I consent to these TERMS &amp; Conditions
+                    <div id="consentErrorMsg"></div>
                 </div>
                 <br />
                 <button name="submit" class="btn btn-primary">Register</button>
@@ -387,6 +386,7 @@ var s_question = document.forms["registerForm"]["s_question"];
 var s_answer = document.forms["registerForm"]["s_answer"];
 var password = document.forms["registerForm"]["pwd_1"];
 var passwordVerify = document.forms["registerForm"]["pwd_2"];
+const checkConsent = document.forms["registerForm"]["checkConsent"];
 
  /* Grab the hidden/empty DIVs to present error messages  */
 var usernameError = document.getElementById("usernameErrorMsg");
@@ -401,12 +401,13 @@ var sqError = document.getElementById("sqErrorMsg");
 var srError = document.getElementById("srErrorMsg");
 var pwdError = document.getElementById("pwd1ErrorMsg");
 var pwdVerifyError = document.getElementById("pwd2ErrorMsg");
+const consentError = document.getElementById("consentErrorMsg");
 
 /* Initialize EVENT LISTENERS */
 username.addEventListener("blur", nameVerify, true);
 firstname.addEventListener("blur", fnameVerify, true);
 surname.addEventListener("blur", snameVerify, true);
-
+checkConsent.addEventListener("change", consentVerify, true);
 mobile.addEventListener("blur", mobileVerify, true);
 dob.addEventListener("blur", dobVerify, true);
 employment.addEventListener("blur", employmentVerify, true);
@@ -418,6 +419,18 @@ s_answer.addEventListener("blur", rVerify, true);
 
 password.addEventListener("blur", pwdVerify, true);
 passwordVerify.addEventListener("blur", pwdConfirmVerify, true);
+
+
+    function consentVerify(){
+
+        if(checkConsent.checked == true){
+            checkConsent.style.border = "0px solid #ff0000";
+                 consentError.innerHTML = "";
+                    return true;
+        }
+
+
+    }
 
    /* This function DEACTIVATES the error messages showcased once  */
     /* the INPUT field IS NOT BLANK! */
@@ -628,6 +641,13 @@ function userRegister(){
                             return false;
         }
 
+
+        if(checkConsent.checked == false){
+        checkConsent.style.border = "1px solid #ff0000";
+            consentError.textContent = "You MUST consent to the conditions above if you wish to register as a member.";
+                consentError.style.color = "#ff0000";
+                    return false;
+    }
 
     }
 
