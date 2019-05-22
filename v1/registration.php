@@ -10,6 +10,119 @@ $response = "default";
 $response_error = "default";
 $server_error = "default";
 $user_error = "default";
+$errMsg = "";
+
+
+if(isset($_POST['submit'])){
+    
+    // Store INPUT data into unique PHP variables for validating.
+  extract($_POST);
+
+  /* We MUST sanitize our input fields for SECURITY purposes. */
+  $fname = filter_var($f_name, FILTER_SANITIZE_STRING);
+  $sname = filter_var($s_name, FILTER_SANITIZE_STRING);
+  $mname = filter_var($m_name, FILTER_SANITIZE_STRING);
+  $dob = filter_var($dob, FILTER_SANITIZE_STRING);
+  $address = filter_var($address, FILTER_SANITIZE_STRING);
+  $gender = filter_var($gender, FILTER_SANITIZE_STRING);
+  $empStatus = filter_var($e_status, FILTER_SANITIZE_STRING);
+  $work = filter_var($work, FILTER_SANITIZE_STRING);  
+  $username = filter_var($username, FILTER_SANITIZE_STRING);
+  $mobile = filter_var($mobile, FILTER_SANITIZE_STRING);
+  $phone = filter_var($phone, FILTER_SANITIZE_STRING);
+  $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+  $membership = filter_var($membership, FILTER_SANITIZE_STRING);
+  $admit_date = date("Y-m-d");  
+
+
+  $dob = date("Y-m-d", strtotime("$dob"));
+  
+    $dbConnect = new database;
+    $userEncrypt = new encryption;
+
+     
+/* Call meant to verify if a requested USERNAME already exists. */
+  $checkUser = $dbConnect->retrieveUsersByUsername($username);
+  
+        // Code for testing...  
+           // echo $checkUser[0]['Results']; exit;
+  
+    if($checkUser[0]['Results'] != 0){
+
+        $errMsg = "Selected username already exists...Please choose another username for your account.";
+        $server_error = "error";
+  
+    } else {
+
+        if($email != false){
+
+            $pwdEncrypt = $userEncrypt->hashPwd($pwd_2);
+            $usrSalt = $userEncrypt->generateSalt();
+                $txt =  $pwdEncrypt . "" . $usrSalt; 
+                    $usrPwdHash = $userEncrypt->hashPwd($txt); 
+
+    $userData = array(
+        'fname'     =>  $fname,
+        'sname'     =>  $sname,
+        'mname'     =>  $mname,
+        'DOB'       =>  $dob,
+        'POA'       =>  $address,
+        'gender'    =>  $gender,
+        'empStatus' =>  $empStatus,
+        'email'     =>  $email,
+        'status'    =>  '1',
+        'username'  =>  $username,
+        'phone'     =>  $phone,
+        'work'      =>  $work,
+        'edu'       =>  "College",
+        'ad'        =>  $admit_date,
+        'rd'        =>  "",
+        'mobile'    =>  $mobile,
+        'membership'=>  $membership,    
+        'password'  =>  $usrPwdHash,
+        'salt'      =>  $usrSalt
+    );
+
+  //  print_r($userData);
+ //   exit;
+    
+    $userConfirm = $dbConnect->registerUser($userData);
+
+        if($userConfirm){
+            
+                $userRecord = $dbConnect->fetchUserRecord($userData['username']);
+
+                if(!empty($userRecord)){
+
+                    $_SESSION['id'] = $userRecord[0]['id'];
+                    $_SESSION['role'] = $recordUser[0]['role'];
+                    $_SESSION['firstname'] = $userRecord[0]['fname'];
+                    $_SESSION['surname'] = $userRecord[0]['sname'];
+                    $_SESSION['username'] = $userRecord[0]['uname'];             
+                                
+                    header('Location: user-profile.php');
+                    
+                } else {
+                    $errMsg = "Error occurred while loading data!";
+                    $server_error = "error";
+                       // exit();
+                }
+             
+            } else {
+            
+                $errMsg = "Error occurred while adding user data!";
+                $server_error = "error";
+            }   
+
+        }
+        
+
+    }  
+
+    
+     
+}
+
 
 ?>
 
@@ -69,117 +182,11 @@ $user_error = "default";
 
 <div class="screen"> 
 
-    <h2>Sign Up NOW!!!</h2>
+   <!-- <h2>Sign Up NOW!!!</h2> -->
 
-         <h2 class="<?php echo $server_error; ?>">Warning unable to register user at this time...</h2>
-
-<?php
+<h2 class="<?php echo $server_error; ?>"><?php echo $errMsg; ?></h2>
 
 
-if(isset($_POST['submit'])){
-    
-    // Store INPUT data into unique PHP variables for validating.
-  extract($_POST);
-
-  /* We MUST sanitize our input fields for SECURITY purposes. */
-  $fname = filter_var($f_name, FILTER_SANITIZE_STRING);
-  $sname = filter_var($s_name, FILTER_SANITIZE_STRING);
-  $mname = filter_var($m_name, FILTER_SANITIZE_STRING);
-  $dob = filter_var($dob, FILTER_SANITIZE_STRING);
-  $address = filter_var($address, FILTER_SANITIZE_STRING);
-  $gender = filter_var($gender, FILTER_SANITIZE_STRING);
-  $empStatus = filter_var($e_status, FILTER_SANITIZE_STRING);
-  $work = filter_var($work, FILTER_SANITIZE_STRING);  
-  $username = filter_var($username, FILTER_SANITIZE_STRING);
-  $mobile = filter_var($mobile, FILTER_SANITIZE_STRING);
-  $phone = filter_var($phone, FILTER_SANITIZE_STRING);
-  $email = filter_var($email, FILTER_VALIDATE_EMAIL);
-  $membership = filter_var($membership, FILTER_SANITIZE_STRING);
-  $admit_date = date("Y-m-d");  
-
-
-  $dob = date("Y-m-d", strtotime("$dob"));
-  
-    $dbConnect = new database;
-    $userEncrypt = new encryption;
-
-     
-/* Call meant to verify if a requested USERNAME already exists. */
-  $checkUser = $dbConnect->retrieveUsersByUsername($username);
-  // Code for testing...  
-           // echo $checkUser[0]['Results']; exit;
-  
-    if($checkUser[0]['Results'] != 0){
-  
-      $user_error = "error";
-  
-    } else {
-
-        if($email != false){
-
-            $pwdEncrypt = $userEncrypt->hashPwd($pwd_2);
-            $usrSalt = $userEncrypt->generateSalt();
-                $txt =  $pwdEncrypt . "" . $usrSalt; 
-                    $usrPwdHash = $userEncrypt->hashPwd($txt); 
-
-    $userData = array(
-        'fname'     =>  $fname,
-        'sname'     =>  $sname,
-        'mname'     =>  $mname,
-        'DOB'       =>  $dob,
-        'POA'       =>  $address,
-        'gender'    =>  $gender,
-        'empStatus' =>  $empStatus,
-        'email'     =>  $email,
-        'status'    =>  '1',
-        'username'  =>  $username,
-        'phone'     =>  $phone,
-        'work'      =>  $work,
-        'edu'       =>  "College",
-        'ad'        =>  $admit_date,
-        'rd'        =>  "",
-        'mobile'    =>  $mobile,
-        'membership'=>  $membership,    
-        'password'  =>  $usrPwdHash,
-        'salt'      =>  $usrSalt
-    );
-
-
-    
-    $userConfirm = $dbConnect->registerUser($userData);
-
-        if($userConfirm){
-            
-                $userData = $dbConnect->fetchUserByUsername($username);
-
-                $_SESSION['id'] = $userData[0]['userid'];
-                $_SESSION['firstname'] = $userData[0]['f_name'];
-                $_SESSION['surname'] = $userData[0]['s_name'];
-                $_SESSION['username'] = $userData[0]['username'];             
-                            
-            
-                header('Location: user-profile.php');
-                
-            } else {
-            
-                $server_error = "error";
-                
-            }   
-
-        }
-        
-
-    // print_r($userData);
-    // exit;
-    
-  
-    }  
-
-    
-     
-}
-
-?>
 <br />
 <br />
 
@@ -191,7 +198,7 @@ if(isset($_POST['submit'])){
               
                         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                              
-                        <h4 class="register-heading">Register as a UWI Member</h4>
+                        <h4 class="register-heading">BIPA Registration</h4>
                         <br />
                        
                                 <div class="row register-form">
@@ -219,8 +226,8 @@ if(isset($_POST['submit'])){
                                             <div id="dobErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
-                                            <input type="text" name="address" class="form-control"  placeholder="Home Address" value="" />
-                                            <div id="addressErrorMsg"></div>
+                                            <input type="text" name="address" class="form-control"  placeholder="IT Designation/Job Title" value="" /> 
+                                                <div id="addressErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
                                             <div class="maxl">
@@ -293,9 +300,7 @@ if(isset($_POST['submit'])){
    </div>
 
 	<div class="col-md-6">
-				
-			
-                				
+							
 				<div class="form-group col-lg-12">
 				<!--	<label>Email Address</label>    -->
 					<input type="email" name="email" placeholder="Email *" class="form-control" id="email">

@@ -5,9 +5,9 @@
 
 <?php
 
-if($_SESSION['username']){
+if(!empty($_SESSION['username'])){
 
-  $userConnect = new database;
+    $userConnect = new database;
 
   $userData = $userConnect->fetchUserByUsername($_SESSION['username'])
   ?>

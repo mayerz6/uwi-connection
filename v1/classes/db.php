@@ -24,9 +24,6 @@ public static function getInstance(){
     return self::$_connection;
 }
 
-
-
-
 private static function connection(){
       
     $dbhost = Core::get('testServer/host'); 
@@ -63,11 +60,11 @@ public static function registerUser($userInput){
 
     
         $query = "INSERT INTO members (username, pwd, f_name, ";
-        $query .= "s_name, m_name, status, DOB, instit_work, ";
-        $query .= "instit_edu, gender, POA, phone, mobile, work, ";
-        $query .= "email, admit_date, resign_date, user_cat, salt) ";
-        $query .= "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ";
-        $query .= "?, ?, ?, ?, ?, ?, ?, ?);";
+        $query .= "s_name, m_name, status, employment_status, DOB, instit_work, ";
+        $query .= "instit_edu, gender, job_title, phone, mobile, work, ";
+        $query .= "email, membership_status, admit_date, resign_date, user_cat, salt) ";
+        $query .= "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ";
+        $query .= "?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
 
         // prepare and bind
@@ -78,13 +75,14 @@ public static function registerUser($userInput){
         } else {
             mysqli_stmt_bind_param(
                 $stmt, 
-                "sssssssssssssssssss",
+                "sssssssssssssssssssss",
                 $userInput['username'], 
                 $userInput['password'], 
                 $userInput['fname'], 
                 $userInput['sname'], 
                 $userInput['mname'], 
-                $userInput['status'], 
+                $userInput['status'],
+                $userInput['empStatus'], 
                 $userInput['DOB'], 
                 $userInput['work'], 
                 $userInput['edu'], 
@@ -94,6 +92,7 @@ public static function registerUser($userInput){
                 $userInput['mobile'], 
                 $userInput['work'], 
                 $userInput['email'], 
+                $userInput['status'], 
                 $userInput['ad'], 
                 $userInput['rd'], 
                 $userInput['membership'],
@@ -660,8 +659,7 @@ public static function fetchUserByUsername($username){
 
             // return json_encode($userData);
                 return $userData;
-                    print_r($userData);
-                    exit();
+                  
     }   else {
      
         die('Connection Failed...');
@@ -1012,6 +1010,52 @@ public function fetchData()
             }
          
         }
+
+
+        public static function fetchUserRecord($username){
+            
+            $dbConnect = self::getInstance();
+          
+                $query = "SELECT * FROM members "; 
+                $query .= "WHERE username = '$username' ";
+            
+            $userData = array();
+            $users = array();
+
+            $results = mysqli_query($dbConnect, $query);
+                
+            if($results){
+
+                while($e=$results->fetch_assoc()){
+                    $users[]=$e;
+                }
+                $userRecords = json_encode($users);
+                $userRecord = json_decode($userRecords, true);
+                $i=0;
+                foreach($userRecord as $usr){
+                    $json = array(
+                        'id'    =>  $usr['userid'],
+                        'fname' =>  $usr['f_name'],
+                        'sname' =>  $usr['s_name'],
+                        'uname' =>  $usr['username'],
+                        'email' =>  $usr['email'],
+                        'phone' =>  $usr['phone'],
+                        'mobile' => $usr['mobile'],
+                        'role'  => $usr['role'],
+                      
+                    );
+                    array_push($userData, $json);
+                }
+
+                    return $userData;
+            }   else {
+             
+                die('Connection Failed...');
+            }
+         
+        }
+
+
 
 
 }

@@ -27,6 +27,12 @@ $GLOBALS['config'] = array(
     'username' => 'mayerz',
     'password' => 'M@y3rZT#ch',
     'db' => 'uwi-connection'
+  ),
+    'testServer_1' => array(
+        'host'     => 'localhost',
+        'username' => 'mayerz',
+        'password' => 'M@y3rZT#ch',
+        'db' => 'membership-data'
 ),
   'table' => array(
       'users' => '[dbo].[Users]',

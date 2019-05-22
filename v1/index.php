@@ -57,7 +57,7 @@ if(isset($_POST['submit'])){
                                 $_SESSION['surname'] = $recordUser[0]['sname'];
                                 $_SESSION['role'] = $recordUser[0]['role'];
                                 $_SESSION['username'] = $recordUser[0]['uname'];
-                                $_SESSION['role'] = $recordUser[0]['role'];
+                            
 
                                 header('Location: dashboard.php');
                                     exit;
