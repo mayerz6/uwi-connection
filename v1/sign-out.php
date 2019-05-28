@@ -100,7 +100,7 @@ if($_SESSION){
               <!--      Running on the LEFT     -->
         
                    
-                    <img class="logout-banner" height="180px;" src="assets/images/calendar.png" />
+                    <img class="logout-banner" height="180px;" src="assets/images/Favicon-Black_on_Transparent.png" />
                     <br />
                     <br />
                       <p><a href="register.php"><b>Register</b></a> Now!</p>

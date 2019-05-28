@@ -21,8 +21,13 @@ if(!empty($dataRecord)){
       'id' => $dataRecord[0]['id'],
       'fname' => $dataRecord[0]['fname'],
       'sname' => $dataRecord[0]['sname'],
+      'mname' => $dataRecord[0]['mname'],
       'uname' => $dataRecord[0]['uname'],
+      'dob' => $dataRecord[0]['dob'],
+      'jtit' => $dataRecord[0]['jtit'],
       'email' => $dataRecord[0]['email'],
+      'gender' => $dataRecord[0]['gender'],
+      'empStatus' => $dataRecord[0]['empStatus'],
       'phone' => $dataRecord[0]['phone'],
       'mobile' => $dataRecord[0]['mobile']
     );
@@ -196,38 +201,48 @@ $checkUser = $dbConnect->retrieveUsersByUsername($username);
                                     <div class="col-md-6">
                                     <div class="form-group">
                                         <!-- <label>Username</label> -->
-                                        <input type="text" name="username" placeholder="Username *" class="form-control" id="username">
+                                        <input type="text" name="username" value="<?php echo (!empty($userData["uname"])) ? $userData["uname"] : " "; ?>" class="form-control" id="username">
                                         <div id="usernameErrorMsg"></div>
                                     </div>
                                         <div class="form-group">
-                                            <input type="text" name="f_name" class="form-control" placeholder="First Name" value="" />
+                                            <input type="text" name="f_name" class="form-control" value="<?php echo(!empty($userData["fname"])) ? $userData["fname"] : " "; ?>" />
                                             <div id="fnErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
-                                            <input type="text" name="m_name" class="form-control" placeholder="Middle Name" value="" />
+                                            <input type="text" name="m_name" class="form-control" placeholder="Middle Name" value="<?php echo(!empty($userData["mname"])) ? $userData["mname"] : " "; ?>" />
                                             <div id="mnErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
-                                            <input type="text" name="s_name" class="form-control" placeholder="Last Name" value="" />
+                                            <input type="text" name="s_name" class="form-control" placeholder="Last Name" value="<?php echo(!empty($userData["sname"])) ? $userData["sname"] : " "; ?>" />
                                             <div id="snErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
                                         <small>Please use the FORMAT <b>dd/MM/YYYY</b></small>
-                                            <input type="text" name="dob" class="form-control"  placeholder="Date of Birth *" value="" />
+                                            <input type="text" name="dob" class="form-control"  placeholder="Date of Birth *" value="<?php echo(!empty($userData["dob"])) ? date('d/m/Y', strtotime($userData["dob"])) : " "; ?>" />
                                             <div id="dobErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
-                                            <input type="text" name="address" class="form-control"  placeholder="Home Address" value="" />
+                                            <input type="text" name="address" class="form-control"  placeholder="Job Title" value="<?php echo(!empty($userData["jtit"])) ? $userData["jtit"] : " "; ?>" />
                                             <div id="addressErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
                                             <div class="maxl">
+                                                <?php $maleCheck = "checked";  ?>
+                                                <?php $femaleCheck = "";  ?>
+
+                                                <?php 
+                                                    if(!empty($userData["gender"])){ 
+                                                        if($userData["gender"] == 'F'){
+                                                            $femaleCheck = "checked";
+                                                            $maleCheck = "";
+                                                        }
+                                                 } ?>
                                                 <label class="radio inline"> 
-                                                    <input type="radio" name="gender" value="M" checked>
+                                                    <input type="radio" name="gender" value="M" <?php echo $maleCheck; ?>>
                                                     <span> Male </span> 
                                                 </label>
                                                 <label class="radio inline"> 
-                                                    <input type="radio" name="gender" value="F">
+                                                    <input type="radio" name="gender" value="F" <?php echo $femaleCheck; ?>>
                                                     <span>Female </span> 
                                                 </label>
                                             </div>
@@ -235,25 +250,54 @@ $checkUser = $dbConnect->retrieveUsersByUsername($username);
                                     </div>
                                     <div class="col-md-6">
                                     <div class="form-group">
+                                   
+                                <!--	<label>Email Address</label>    -->
+                                    <input type="email" name="email" placeholder="Email *" value="<?php echo(!empty($userData["email"])) ? $userData["email"] : " "; ?>" class="form-control" id="email">
+                                    <div id="emailErrorMsg"></div>
+
+                                                </div>
+                                                <div class="form-group">
+
+                                        <?php
+                                            $ftSelected = "";
+                                            $ptSelected = "";
+                                            $unSelected = "";        
+
+                                            if(!empty($userData["empStatus"])){
+                                                switch($userData["empStatus"]){
+                                                    case "1":
+                                                    $ftSelected = "selected = selected";         
+                                                        break;
+                                                    case "2":
+                                                    $ptSelected = "selected = selected";         
+                                                        break;
+                                                    case "3":
+                                                    $unSelected = "selected = selected";         
+                                                        break;    
+                                                }
+                                            }
+                                        
+                                        ?>
+
                                             <select name="e_status" class="form-control">
                                                 <option class="hidden">Employment Status</option>
-                                                <option value="1">Full-Time Employment</option>
-                                                <option value="2">Part-Time Employment</option>
-                                                <option value="3">Unemployed</option>
+                                                <option value="1" <?php echo $ftSelected; ?>>Full-Time Employment</option>
+                                                <option value="2" <?php echo $ptSelected; ?>>Part-Time Employment</option>
+                                                <option value="3" <?php echo $unSelected; ?>>Unemployed</option>
                                             </select>
                                             <div id="employmentErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
                                         <small>Please use the FORMAT <b>(xxx)-xxx-xxxx</b></small>
-                                            <input type="text" name="mobile" maxlength="15" class="form-control" placeholder="Mobile Contact *" value="" />
+                                            <input type="text" name="mobile" maxlength="15" class="form-control" placeholder="Mobile Contact *" value="<?php echo(!empty($userData["mobile"])) ? $userData["mobile"] : " "; ?>" />
                                             <div id="mobileErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
-                                            <input type="text" name="work" maxlength="15" class="form-control" placeholder="Work Contact" value="" />
+                                            <input type="text" name="work" maxlength="15" class="form-control" placeholder="Work Contact" value="<?php echo(!empty($userData["phone"])) ? $userData["phone"] : " "; ?>" />
                                             <div id="mobileErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
-                                            <input type="text" name="phone" maxlength="15" class="form-control" placeholder="Landline Contact" value="" />
+                                            <input type="text" name="phone" maxlength="15" class="form-control" placeholder="Landline Contact" value="<?php echo(!empty($userData["work"])) ? $userData["work"] : " "; ?>" />
                                             <div id="phoneErrorMsg"></div>
                                         </div>
                                         <div class="form-group">
@@ -281,8 +325,7 @@ $checkUser = $dbConnect->retrieveUsersByUsername($username);
         <!-- Row SECTION defined -->
     </div>
 
-
-    
+<!--
 <div class="row">
 
 <div class="col-md-12">
@@ -294,19 +337,19 @@ $checkUser = $dbConnect->retrieveUsersByUsername($username);
 			
                 				
 				<div class="form-group col-lg-12">
-				<!--	<label>Email Address</label>    -->
+				
 					<input type="email" name="email" placeholder="Email *" class="form-control" id="email">
                     <div id="emailErrorMsg"></div>
 				</div>
                 
 				<div class="form-group col-lg-12">
-				<!--	<label>Password</label>     -->
+				
 					<input type="password" name="pwd_1" placeholder="Password *" class="form-control" id="pwd_1">
                     <div id="pwd1ErrorMsg"></div>
 				</div>
 				
 				<div class="form-group col-lg-12">
-				<!--	<label>Repeat Password</label>  -->
+				
 					<input type="password" name="pwd_2" placeholder="Confirm Password *" class="form-control" id="pwd_2">
                     <div id="pwd2ErrorMsg"></div>
 				</div>
@@ -337,7 +380,12 @@ $checkUser = $dbConnect->retrieveUsersByUsername($username);
 			
            
 </div>
-
+              
+-->
+<br/>
+<br/>
+<button name="submit" class="btn btn-primary">Update</button>
+<button name="submit" class="btn btn-danger">Cancel</button>
  </form>
             
 
@@ -615,8 +663,11 @@ function userRegister(){
     </div>
 
 </div>
+
+<div class="container">
         <footer>&copy; Copyright Larry Mayers | All Rights Reservered</footer>
-    
+</div>
+
     </body>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

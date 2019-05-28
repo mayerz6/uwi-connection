@@ -4,7 +4,6 @@
 <?php  include 'classes/db.php';  ?>
 
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -103,8 +102,6 @@
 
 
  <?php 
-
-
 
 if($_SESSION){ 
 
@@ -205,7 +202,7 @@ $_SESSION['eTime'] = $eventET;
                   $response_error = "msg-success";
                   
                   
-                  $connection->close();
+              //    $connection->close();
                   
                   header("location: user-scheduler.php");
 
@@ -241,7 +238,7 @@ $_SESSION['eTime'] = $eventET;
     $_SESSION['sTime'] = "";
     $_SESSION['eTime'] = "";
     
-     $connection->close();
+  //   $connection->close();
 
     /* We are testing whether the event is being EDITED or CREATED */
    if( !isset($_GET['startDate']) || empty($_GET['startDate'])) {
@@ -460,9 +457,10 @@ $_SESSION['eTime'] = $eventET;
 </div>
 </div>
 
-        
-<footer>&copy; Copyright UWI | All Rights Reservered</footer>
-    
+<div class="container">
+        <footer>&copy; Copyright Larry Mayers | All Rights Reservered</footer>
+</div>
+
     </body>
     
 

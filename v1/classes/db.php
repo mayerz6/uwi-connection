@@ -98,6 +98,7 @@ public static function registerUser($userInput){
                 $userInput['membership'],
                 $userInput['salt']  
             );
+
          $results = mysqli_stmt_execute($stmt);
 
              //   echo "<b>" . $results . "</b>";
@@ -508,10 +509,12 @@ public static function fetchDataByHost($host_id)
             $query = "SELECT * FROM Events WHERE hostId='$host_id' ORDER BY eventSD";
             $result = mysqli_query($dbConnect, $query);
             
+          //  echo $host_id;
+        //  exit();
+
+         //   $no_rows = mysqli_num_rows($result);
             
-            $no_rows = mysqli_num_rows($result);
-            
-            if($no_rows > 0) {
+            if($result) {
                 
                 //foreach($result as $row)
                 while($e=$result->fetch_assoc())
@@ -697,10 +700,16 @@ public static function fetchUserByUserId($userId){
                 'id'    =>  $usr['userid'],
                 'fname' =>  $usr['f_name'],
                 'sname' =>  $usr['s_name'],
+                'mname' =>  $usr['m_name'],
                 'uname' =>  $usr['username'],
                 'email' =>  $usr['email'],
                 'phone' =>  $usr['phone'],
                 'mobile' => $usr['mobile'],
+                'work' => $usr['work'],
+                'empStatus' => $usr['employment_status'],
+                'gender' => $usr['gender'],
+                'jtit' => $usr['job_title'],
+                'dob' =>  $usr['DOB'],
                 'pwd'   => $usr['pwd'],
                 'salt'  => $usr['salt']
         );
@@ -716,8 +725,6 @@ public static function fetchUserByUserId($userId){
     }
 
 }
-
-
 
 /* ################################## Function used to CHECK the existence of a specific User data based on their USERID. ################################## */
 

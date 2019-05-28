@@ -241,9 +241,11 @@ function userLogin(){
 </div>
 
 </div>
+
 <div class="container">
         <footer>&copy; Copyright Larry Mayers | All Rights Reservered</footer>
 </div>
+
     </body>
 
  
