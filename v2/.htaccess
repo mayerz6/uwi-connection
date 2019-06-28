@@ -1,0 +1,8 @@
+<IfModule mod_headers.c>
+    Options -Multiviews
+	RewriteEngine On
+    RewriteBase /uwi-connection.com/v2
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
+</IfModule>

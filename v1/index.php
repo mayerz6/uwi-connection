@@ -133,8 +133,9 @@ if(isset($_POST['submit'])){
 </nav>
         </header>
 
+       
 <div class="screen"> 
-  <div class="row">
+<div class="row">
   <div class="col-md-6">
       <img src="assets/images/pngs/Favicon/Favicon-Default_Reverse_on_Ttransparent.png" />
         <h2>Welcome To the Team</h2>
