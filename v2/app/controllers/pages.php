@@ -99,6 +99,15 @@ class pages extends Controller{
         redirect('users/dashboard');
 
     }
+       
+
+    public function isLoggedIn(){
+        if(isset($_SESSION["userId"])){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
 }

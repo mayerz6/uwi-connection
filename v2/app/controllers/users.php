@@ -13,7 +13,221 @@ class Users extends Controller{
     }
 
     public function dashboard(){
-        $this->view('users/dashboard');
+
+        if(self::isLoggedIn()){
+
+            
+            $recData = $this->userModel->fetchUserData($_SESSION['userId']);
+
+             // Present the web form for user interaction.
+             $data = [
+                'f_name' => $recData[0]['f_name'],
+                's_name' => $recData[0]['s_name'],
+                'memCat' => $recData[0]['cat'],
+                'memDes' => $recData[0]['des'],
+                'gender' => $recData[0]['gender'],
+                'mobile' => $recData[0]['mobile'],
+                'work' => $recData[0]['work'],
+                'phone' => $recData[0]['phone'],
+                'email' => $recData[0]['email'],
+                'status' => $recData[0]['status'],
+                'app_date' => $recData[0]['app'],
+                'admit'  => $recData[0]['admit'],
+                'resign' => $recData[0]['resign']
+            ];   
+
+            switch($data['memDes']){
+
+                case 1:
+                    $data['memDes'] = "IT Systems Administrator";
+                        break;
+                case 2:
+                    $data['memDes'] = "IT Systems Security";
+                        break;
+                case 3:
+                    $data['memDes'] = "Web/Applications Developer";
+                        break;
+                case 4:
+                    $data['memDes'] = "Social Media Manager";
+                        break;
+                case 5:
+                    $data['memDes'] = "Graphic Designer";
+                        break;                             
+
+            }
+    
+            switch($data['memCat']){
+
+                case 1:
+                    $data['memCat'] = "Affilitate Member";
+                        break;
+                case 2:
+                    $data['memCat'] = "Student Member";
+                        break;
+                case 3:
+                    $data['memCat'] = "Professional Member";
+                        break;
+                case 4:
+                    $data['memCat'] = "Corporate Member";
+                        break;                  
+
+            }
+
+
+            $this->view('users/dashboard', $data);
+
+        } else {
+            header('Location: '. URLROOT);
+          //  $this->view('pages/index');
+        }
+
+      
+    }
+
+    public function edit(){
+
+        if(self::isLoggedIn()){
+
+              /* If the user SUBMITS the form, execute the following. */
+           if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+            /* User input delivered via the web form is SANITIZED before being processed. */
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            extract($_POST);
+            /* Validation of user input can take place here. */
+
+                     /* Validation of user input can take place here. */
+
+            $firstname = trim($firstname);
+            $surname = trim($surname);
+            $mobile = trim($mobile);
+            $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+            $email = trim($email);
+                       
+            /* Store user input into array for validation. */
+            $data = [
+                'id' => $_SESSION["userId"],
+                'fname' => $firstname,
+                'fnameError' => '',
+                'sname' => $surname,
+                'snameError' => '',
+                'email' => $email,
+                'emailError' => '',
+                'mobile' => $mobile,
+                'mobileError' => '',
+                'pwd_1' => $pwd_1,
+                'pwd_1Error' => '',
+                'pwd_2' => $pwd_2,
+                'pwd_2Error' => '',  
+                'salt' => ''
+            ];
+
+              /* Validation of the user's input for their FIRSTNAME. */
+      if(empty($data["fname"])){
+        $data['fnameError'] = 'Blank firstnames aren\'t allowed...';
+            }
+        /* Validation of the user's input for their FIRSTNAME. */
+        if(empty($data["sname"])){
+            $data['snameError'] = 'Blank surnames aren\'t allowed...';
+        }
+        /* Validation of the user's input for their FIRSTNAME. */
+        if(empty($data["email"])){
+            $data['emailError'] = 'Blank email addresses aren\'t allowed...';
+        } 
+        /* Validation of the user's input for their FIRSTNAME. */
+        if(empty($data["mobile"])){
+            $data['mobileError'] = 'Blank contact numbers aren\'t allowed...';
+        }
+      
+
+        if(empty($data["pwd_1"])){
+            $data['pwd_1Error'] = 'Blank user passwords aren\'t allowed...';     
+        } else {
+            if (strlen($data['pwd_1']) < 6){
+                $data['pwd_1Error'] = 'Passwords MUST be at least (7) characters in length...';
+            } else if($data["pwd_1"] != $data["pwd_2"]){
+                $data['pwd_1Error'] = 'Your confirmation password doesn\'t match...';
+            }
+        }
+
+         /* Validation of the user's input for their FIRSTNAME. */
+         if(empty($data["pwd_2"])){
+            $data['pwd_2Error'] = '...Blank confirmation passwords aren\'t allowed';
+        } else {
+                if($data["pwd_1"] != $data["pwd_2"]){
+                    $data['pwd_2Error'] = 'Confirmation password doesn\'t match...';
+                }
+        }
+
+
+        if(empty($data["fnameError"]) && empty($data["snameError"]) && empty($data["emailError"]) && empty($data["mobileError"]) && empty($data["pwd_1Error"]) && empty($data["pwd_2Error"])){
+        
+            $userEncrypt = new encryption;
+            $pwdEncrypt = $userEncrypt->hashPwd($data["pwd_1"]);    
+            $usrSalt = $userEncrypt->generateSalt();
+
+            $txt = $pwdEncrypt . "" . $usrSalt;
+                $usrPwdHash = $userEncrypt->hashPwd($txt);
+
+                $data["pwd_1"] = $usrPwdHash;
+                $data["salt"] = $usrSalt;
+
+                 //   print_r($data);
+                   //     exit();
+                
+                $auth = $this->userModel->editRecord($data);
+
+                if($auth){
+            flash('register_success', 'You account was updated successfully!');
+                 header('Location: '. URLROOT . '/users/dashboard');
+                 // $this->view('users/login');  
+                } else {
+                    echo "Failed to add user data!";
+                        exit();
+                }
+
+        
+        } else {
+            
+            $this->view('profiles/edit-profile', $data);
+
+        }
+
+           } else {
+
+           
+   /* Functionality happening before user SUBMITS form. */
+   $id = $_SESSION["userId"];
+            
+   $userData = $this->userModel->fetchUserData($id);
+     //  print_r($userData);
+       //        exit();
+   if(!empty($userData)){
+        /* If FORM has not been submitted; present the last
+            stored records of the logged in user's account. */
+       
+       $data = [
+           "fname" => $userData[0]["f_name"],
+           "sname" => $userData[0]["s_name"],
+           "email" => $userData[0]["email"],
+           "phone" => $userData[0]["phone"],
+           "mobile" => $userData[0]["mobile"],
+           "title" => $userData[0]["title"]
+       ];
+
+
+            $this->view('profiles/edit-profile', $data);
+
+           }
+
+        }
+           
+        } else {
+          // $this->view('pages/index');
+      header('Location: '. URLROOT);
+        }
+
     }
 
     public function register(){
@@ -195,4 +409,26 @@ class Users extends Controller{
     
             }
         }
+
+
+        public static function isLoggedIn(){
+            if(isset($_SESSION["userId"])){
+                return true;
+            } else {
+                return false;
+            }
+        }
+    
+        
+    public function logout(){
+
+        unset($_SESSION["userId"]);
+        unset( $_SESSION["fname"]);
+        unset($_SESSION["userId"]);
+            session_destroy();
+                redirect('');
+
+    }
+    
+
 }

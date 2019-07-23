@@ -5,18 +5,97 @@ h4.error { outline: 1px solid #ff0000; }
 .msg-success { outline: 1px solid #43dd00; width: 100%; }
 .alert-success{ width: 100%; }
 .default { display: none; }
+div.progress { margin-top: 4px; margin-bottom: 4px; }
+div.profile { margin-top: 40px; margin-bottom: 60px; }
+h2.greeting { color: #0d47a1; margin-left: 20px;}
+div.greeting-screen { padding: 20px; }
 .error { color: red; font-weight: 900; }
 .hidden { display: none; visibility: hidden; }
+
+/* Updated code */
+.table thead th { font-weight: 100; font-size: larger; }
+table th { padding: 0.15rem; border-top: 1px solid #dee2e6; }
+
 #pwd1ErrorMsg, #pwd2ErrorMsg, #mobileErrorMsg, #emailErrorMsg, #phoneErrorMsg, #desErrorMsg, #catErrorMsg, #snErrorMsg, #fnErrorMsg, #usrNameErrorMsg, #pwdErrorMsg, #consentErrorMsg { color: red; font-weight: 100; }
+
+
+/* TOGGLE Button */
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* Rounded sliders */
+
 
 @media screen and (min-width: 921px) {
     div.screen { height: auto; width: 960px; outline: 1px solid #f8f9fa!important; padding: 10px; margin: 10px auto; }
 }
 
 
-
 @media screen and (min-width: 700px) and (max-width: 920px) {
     div.screen { height: auto; width: 92%; outline: 1px solid #f8f9fa!important; padding: 10px; margin: 10px auto; }
+    figure > img { border: 1px solid #ccc; height: 238px; border-radius: 50%; }
+    .col-xs-3 { display: inline-block; }
 }
 
 
@@ -26,13 +105,52 @@ h4.error { outline: 1px solid #ff0000; }
 }
 
 @media screen and (max-width: 519px) {
+
+    /* Force table to not be like tables anymore */
+	table, thead, tbody, th, td, tr { 
+    display: block; 
+    width: 100%;
+	}
+	
+	/* Hide table headers (but not display: none;, for accessibility) */
+	thead tr { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+	
+	tr { border: 1px solid #ccc; }
+	
+	td { 
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee; 
+	/*	position: relative; */
+		padding-left: 50%; 
+	}
+	
+	td:before { 
+		/* Now like a table header */
+	/*	position: absolute; */
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+  }
+  
+
+    td:nth-of-type(1):before { content: "Application Date -"; }
+	td:nth-of-type(2):before { content: "Admission Date -"; }
+	td:nth-of-type(3):before { content: "Renewal Date -"; }
+	
+
+    div.panel-default > div.panel-heading img { outline: 0px solid #000; margin: 0 auto; display: block; }
+    h2.greeting { font-weight: 200; text-align: center; }
     div.screen { text-align: center; height: auto; width: 100%; outline: 1px solid #000000; padding: 10px; margin: 10px 0px; }
     div.screen > div.row > div.col-md-6 { outline: 1px solid #f8f9fa!important; margin-top: 20px; }
 }
-
-
-
-
 
 
 /****** Searchable container */
@@ -71,19 +189,17 @@ h4.error { outline: 1px solid #ff0000; }
        background-color:#5bc0de;
        color:#FFF
    }
-   
-   
-   
-   
-   
+
    
    /*   */
 
-    figure > img { border: 1px solid #ccc; height: 238px; border-radius: 50%;}
-   
+    figure > img { border: 1px solid #ccc; height: 238px; border-radius: 50%; display: block; margin: 10px auto; }
+   .col-xs-3 { display: inline-block; }
    .btn-compose-email {
        padding: 10px 0px;
        margin-bottom: 20px;
+       background-color: #0d47a1;
+       color: #fff;
    }
    
    .btn-danger {
@@ -126,6 +242,9 @@ h4.error { outline: 1px solid #ff0000; }
    /* ========================================================================
     * MAIL
     * ======================================================================== */
+   .nav { display: inline; }
+
+
    .nav-email > li:first-child + li:active {
      margin-top: 0px;
    }
@@ -495,11 +614,11 @@ h4.error { outline: 1px solid #ff0000; }
    }
    
    .bs-callout-danger {
-       border-left-color: #d9534f;
+       border-left-color: #ffeb3b;
    }
    
    .bs-callout-danger h4{
-       color: #d9534f;
+       color: #0d47a1;
    }
    
    .resume .list-group-item:first-child, .resume .list-group-item:last-child{

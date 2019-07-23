@@ -4,71 +4,34 @@
 
  <div class="container">
  
-    <div class="screen"> 
+    <div class="greeting-screen"> 
         <div class="row"><?php flash('login_success'); ?></div>
-            <h2>Welcome to Your Account Profile</h2>
+            <h2 class="greeting">Welcome to Your BIPA Profile</h2>
     </div>
 
 
-<div class="container">
-<div class="row">
-    <!-- LEFT Region Content -->
-    <div class="col-sm-3">
-        <a href="mail-compose.html" class="btn btn-danger btn-block btn-compose-email">Edit Account</a>
-        <ul class="nav nav-pills nav-stacked nav-email shadow mb-20">
-            <li class="active">
-                <a href="#mail-inbox.html">
-                    <i class="fa fa-inbox"></i> Inbox  <span class="label pull-right">7</span>
-                </a>
-            </li>
-            <li>
-                <a href="#mail-compose.html"><i class="fa fa-envelope-o"></i> Send Mail</a>
-            </li>
-            <li>
-                <a href="#"><i class="fa fa-certificate"></i> Important</a>
-            </li>
-            <li>
-                <a href="#">
-                    <i class="fa fa-file-text-o"></i> Drafts <span class="label label-info pull-right inbox-notification">35</span>
-                </a>
-            </li>
-            <li><a href="#"> <i class="fa fa-trash-o"></i> Trash</a></li>
-        </ul><!-- /.nav -->
-
-        <h5 class="nav-email-subtitle">More</h5>
-        <ul class="nav nav-pills nav-stacked nav-email mb-20 rounded shadow">
-            <li>
-                <a href="#">
-                    <i class="fa fa-folder-open"></i> Promotions  <span class="label label-danger pull-right">3</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i class="fa fa-folder-open"></i> Job list
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i class="fa fa-folder-open"></i> Backup
-                </a>
-            </li>
-        </ul><!-- /.nav -->
-    </div>
-<!-- LEFT Region Content -->
-
-
-<!-- RIGHT Region Content -->
-    <div class="col-sm-9">
-        
-        <!-- resumt -->
+    <div class="container">
+       <div class="row">
+          
+          <!-- RIGHT Region Content -->
+         <div class="col-sm-12">
+          
+          <!-- resumt -->
         <div class="panel panel-default">
+
                <div class="panel-heading resume-heading">
                   <div class="row">
                     
                         <div class="col-md-4">
                            <figure>
-                              <img class="img-circle img-responsive" alt="" src="http://placehold.it/300x300">
+                              <img class="img-circle img-responsive" alt="" src="<?php echo URLROOT; ?>/assets/images/default_photo.png">
                            </figure>
+                          
+                          
+                           <a href="<?php echo URLROOT; ?>/users/edit" class="btn btn-default btn-block btn-compose-email">Edit Account</a>
+       
+
+                           <!--
                            <div class="row">
                               <div class="col-xs-12 social-btns">
                                  <div class="col-xs-3 col-md-1 col-lg-1 social-btn-holder">
@@ -96,22 +59,23 @@
                                     <i class="fa fa-stack-overflow"></i> </a>
                                  </div>
                               </div>
-                              
-                              
                            </div>
+                           //-->
                         </div>
                         <div class="col-md-8">
                            <ul class="list-group">
-                              <li class="list-group-item">John Doe</li>
-                              <li class="list-group-item">Software Engineer</li>
-                              <li class="list-group-item">Google Inc. </li>
-                              <li class="list-group-item"><i class="fa fa-phone"></i> 000-000-0000 </li>
-                              <li class="list-group-item"><i class="fa fa-envelope"></i> john@example.com</li>
+                              <li class="list-group-item"><?php echo (!empty($data['f_name'])) ? $data['f_name'] : ''; ?> <?php echo (!empty($data['s_name'])) ? $data['s_name'] : ''; ?></li>
+                              <li class="list-group-item"><?php echo (!empty($data['memDes'])) ? $data['memDes'] : ''; ?></li>
+                              <li class="list-group-item"><?php echo (!empty($data['memCat'])) ? $data['memCat'] : ''; ?></li>
+                              <li class="list-group-item"><i class="fa fa-phone"></i> <?php echo (!empty($data['mobile'])) ? $data['mobile'] : ''; ?> </li>
+                              <li class="list-group-item"><i class="fa fa-envelope"></i> <?php echo (!empty($data['email'])) ? $data['email'] : ''; ?></li>
                            </ul>
                         </div>
                      
                   </div>
                </div>
+
+                     <!--
                <div class="bs-callout bs-callout-danger">
                   <h4>Summary</h4>
                   <p>
@@ -123,6 +87,7 @@
                      Clita debitis apeirian et sit, integre iudicabit elaboraret duo ex. Nihil causae adipisci id eos.
                   </p>
                </div>
+           
                <div class="bs-callout bs-callout-danger">
                   <h4>Research Interests</h4>
                   <p>
@@ -131,6 +96,7 @@
                      Evolutionary Algorithms.
                   </p>
                </div>
+            
                <div class="bs-callout bs-callout-danger">
                   <h4>Prior Experiences</h4>
                   <ul class="list-group">
@@ -166,6 +132,8 @@
                      </a>
                   </ul>
                </div>
+               
+
                <div class="bs-callout bs-callout-danger">
                   <h4>Key Expertise</h4>
                   <ul class="list-group">
@@ -177,6 +145,44 @@
                      <li class="list-group-item"> Lorem ipsum dolor sit amet, ea vel prima adhuc</li>
                   </ul>
                </div>
+               //-->
+
+               <div class="bs-callout bs-callout-danger">
+                  <h4>Membership Term</h4>
+                  <table style="width=100%; table-layout: fixed;" class="table table-striped table-responsive ">
+                     <thead>
+                        <tr>
+                           <th>Date of Application</th>
+                           <th>Date of Admission</th>
+                           <th>Date of Renewal</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <?php  
+
+                              if($data['app_date'] <= $data['admit']){
+                                 $admit = $data['admit'];
+                                 $res = $data['resign'];
+                              } else {
+                                 $admit = "Pending";     
+                                 $res ="";
+                                                       }
+
+                           ?>
+                           <td><b><?php echo (!empty($data['app_date'])) ? $data['app_date'] : ''; ?></b></td>
+                           <td><b><?php echo (!empty($admit)) ? $admit : ''; ?></b></td>
+                           <td><b><?php  echo (!empty($res)) ? $res : ''; ?></b></td>
+                        </tr>
+                      <!--  <tr>
+                           <td>BSc. in Computer Science and Engineering</td>
+                           <td>2011</td>
+                           <td> 3.25 </td>
+                        </tr>   -->
+                     </tbody>
+                  </table>
+               </div>
+
                <div class="bs-callout bs-callout-danger">
                   <h4>Language and Platform Skills</h4>
                   <ul class="list-group">
@@ -233,33 +239,66 @@
                      </a>
                   </ul>
                </div>
-               <div class="bs-callout bs-callout-danger">
-                  <h4>Education</h4>
-                  <table class="table table-striped table-responsive ">
-                     <thead>
-                        <tr>
-                           <th>Degree</th>
-                           <th>Graduation Year</th>
-                           <th>CGPA</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        <tr>
-                           <td>Masters in Computer Science and Engineering</td>
-                           <td>2014</td>
-                           <td> 3.50 </td>
-                        </tr>
-                        <tr>
-                           <td>BSc. in Computer Science and Engineering</td>
-                           <td>2011</td>
-                           <td> 3.25 </td>
-                        </tr>
-                     </tbody>
-                  </table>
-               </div>
+
+
+
+
             </div>
          </div>
-        <!-- resume -->
+       <!-- RIGHT Region Content -->
+
+         <!-- LEFT Region Content -->
+  <!--
+        <div class="col-sm-3">
+        
+           <ul class="nav nav-pills nav-stacked nav-email shadow mb-20">
+            <li class="active">
+                <a href="#mail-inbox.html">
+                    <i class="fa fa-inbox"></i> Inbox  <span class="label pull-right">7</span>
+                </a>
+            </li>
+            <li>
+                <a href="#mail-compose.html"><i class="fa fa-envelope-o"></i> Send Mail</a>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-certificate"></i> Important</a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-file-text-o"></i> Drafts <span class="label label-info pull-right inbox-notification">35</span>
+                </a>
+            </li>
+            <li><a href="#"> <i class="fa fa-trash-o"></i> Trash</a></li>
+        </ul>
+        
+        //-->
+        <!-- /.nav -->
+                                                         <!--
+        <h5 class="nav-email-subtitle">More</h5>
+        <ul class="nav nav-pills nav-stacked nav-email mb-20 rounded shadow">
+            <li>
+                <a href="#">
+                    <i class="fa fa-folder-open"></i> Promotions  <span class="label label-danger pull-right">3</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-folder-open"></i> Job list
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-folder-open"></i> Backup
+                </a>
+            </li>
+        </ul>
+        //-->
+        <!-- /.nav -->
+    </div>
+   
+<!-- LEFT Region Content -->
+
+
 
     </div>
 </div>

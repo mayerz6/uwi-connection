@@ -133,7 +133,7 @@
                                                                                                                 
                                                     <option value="0" <?php echo $selDef; ?>>ICT Designation</option>
                                                     <option value="1" <?php echo $selSA; ?>>IT Systems Admin</option>
-                                                    <option value="2" <?php echo $selSE; ?>>IT Systems Engineer</option>
+                                                    <option value="2" <?php echo $selSE; ?>>IT Systems Security</option>
                                                     <option value="3" <?php echo $selWD; ?>>Web/Applications Developer</option>
                                                     <option value="4" <?php echo $selSocial; ?>>Social Media Manager</option>
                                                     <option value="5" <?php echo $selGD; ?>>Graphic Designer</option>

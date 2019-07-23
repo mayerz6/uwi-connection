@@ -9,33 +9,45 @@
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
      
+     
+  
+      <?php if(isset($_SESSION['userId'])) { ?>
+
+        <li class="nav-item active">
+        <a class="nav-link" href="<?php echo URLROOT; ?>/users/dashboard">Dashboard <span class="sr-only">(current)</span></a>
+      </li>
+
+     <!--   
+       <li class="nav-item">
+        <a class="nav-link" href="scheduler.php">Schedule</a>
+      </li>
+      <li class="nav-item ">
+        <a class="nav-link" href="<?php echo URLROOT; ?>/profile">Profile</a>
+      </li>
+      <li class="nav-item ">
+        <a class="nav-link" href="<?php echo URLROOT; ?>/profile">Job Board</a>
+      </li>
+      <li class="nav-item ">
+        <a class="nav-link" href="<?php echo URLROOT; ?>/profile">News</a>
+      </li>
+      -->
+
+      <li class="nav-item ">
+        <a class="nav-link" href="<?php echo URLROOT; ?>/users/logout">Logout</a>
+      </li>
+
+     <?php } else { ?>
+      
       <li class="nav-item active">
         <a class="nav-link" href="<?php echo URLROOT; ?>/">Home <span class="sr-only">(current)</span></a>
       </li>
-     <!--
+  
+
       <li class="nav-item active">
-        <a class="nav-link" href="<?php echo URLROOT; ?>/profile">Profile</a>
-      </li>
-            -->
-       <li class="nav-item active">
         <a class="nav-link" href="<?php echo URLROOT; ?>/users/register">Register</a>
       </li>
-      
-    <!--
-      <li class="nav-item">
-        <a class="nav-link" href="about.php">About</a>
-      </li>
-        --> 
-     <!-- 
-        <li class="nav-item">
-        <a class="nav-link" href="contact.php">Contact</a>
-	  </li>
-        -->
-        <!--
-    <li class="nav-item">
-        <a class="nav-link" href="scheduler.php">Schedule</a>
-      </li>
-        -->
+
+     <?php } ?>
     </ul>
   </div>
 </nav>

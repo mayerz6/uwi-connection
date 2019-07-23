@@ -51,16 +51,7 @@ public static function registerUser($userInput){
         
          $dbConnect = self::$_connection;
 
-         switch(ucwords($userInput['gender'])){
-            case 'Male':
-                $userInput['gender'] = 'M';
-                    break;
-            case 'Female':
-                    $userInput['gender'] = 'F';
-                        break;
-            default:
-                $userInput['gender'] = 'X';
-        }
+    
       /*    Example of a PREPARED Statements   */
      /* Improved Security */
     
@@ -140,8 +131,6 @@ public static function registerUser($userInput){
 
 }
 
-
-
 /* ################################## Function used to REGISTER a new user ################################### */
 
 public static function updateUserProfile($userInput, $recordId){
@@ -212,8 +201,8 @@ public static function updateUserProfile($userInput, $recordId){
             foreach($userRecord as $usr){                    
                 $json = array(
                     'id'    =>  $usr['userId'],
-                    'fname' =>  $usr['firstname'],
-                    'sname' =>  $usr['surname'],
+                    'fname' =>  $usr['f_name'],
+                    'sname' =>  $usr['s_name'],
                     'email' =>  $usr['email'],
                     'phone' =>  $usr['phone'],
                     'gender'  => $usr['gender']
@@ -234,6 +223,111 @@ public static function updateUserProfile($userInput, $recordId){
 
     }
 
+
+public function checkUserById($userId){
+
+         
+    /* Initial call to the database connection METHOD */
+    self::getInstance(); 
+
+    $dbConnect = self::$_connection;
+
+    $userData = array();
+
+    $query = "SELECT COUNT(*) AS Results FROM userProfileData ";
+    $query .= "WHERE userId = '$userId' ";
+    
+    /* $results = odbc_exec(self::$_connection, $query); */
+    $results = mysqli_query($dbConnect, $query);
+        
+    if($results){
+        /* while($e=odbc_fetch_object($results)){ */
+        while($e=$results->fetch_assoc()){
+            $users[]=$e;
+        }
+
+        $userRecords = json_encode($users);
+        $userRecord = json_decode($userRecords, true);
+
+      // echo $userRecord[0]["Results"];
+      //  exit();
+   
+        return $userRecord[0]["Results"];
+    
+} else {
+
+    die('Connection Failed...');
+
+}
+
+
+}
+
+
+/* ################################## Function used to retrieve user information based on ################################### */
+/* ################################### email address associated with the account. ################################### */
+
+public static function retrieveUserIdById($userId){
+            
+    /* Initial call to the database connection METHOD */
+    self::getInstance(); 
+
+    $dbConnect = self::$_connection;
+
+    $userData = array();
+
+    $query = "SELECT * FROM userProfileData ";
+    $query .= "WHERE userId = '$userId' ";
+    
+
+   /* $results = odbc_exec(self::$_connection, $query); */
+    $results = mysqli_query($dbConnect, $query);
+    
+    if($results){
+        /* while($e=odbc_fetch_object($results)){ */
+        while($e=$results->fetch_assoc()){
+            $users[]=$e;
+        }
+
+        $userRecords = json_encode($users);
+        $userRecord = json_decode($userRecords, true);
+
+        $i=0;
+
+        foreach($userRecord as $usr){                    
+            $json = array(
+                'id'    =>  $usr['userId'],
+                'f_name' =>  $usr['f_name'],
+                's_name' =>  $usr['s_name'],
+                'email' =>  $usr['email'],
+                'phone' =>  $usr['phone'],
+                'work' =>  $usr['work'],
+                'mobile' =>  $usr['mobile'],
+                'gender'  => $usr['gender'],
+                'title'   => $usr['title'],
+                'status'  => $usr['status'],
+                'des'  => $usr['user_des'],
+                'cat'  => $usr['user_cat'],
+                'app' => $usr['app_date'],
+                'admit'  => $usr["admit_date"],
+                'resign'  => $usr["resign_date"]
+
+            );
+            array_push($userData, $json);
+        }
+
+            // return json_encode($userData);
+             //   print_r($userData);
+              //  exit();
+            return $userData;
+
+
+    }   else {
+     
+        die('Connection Failed...');
+    }
+
+}    
 
  
 /* ############## Function used to verify the existence of a email address ############ */
@@ -266,9 +360,44 @@ public static function updateUserProfile($userInput, $recordId){
 
     }
 
+/*  ################################ Function used to DISPLAY ALL User data within the SYSADMIN page ################################ */
+
+public static function displayAllUsers(){
+
+    self::getInstance();
+
+    $dbConnect = self::$_connection;
+    
+
+    $userData = array();
+    $users = array();
+    $json = array();
+
+    $query = 'SELECT * FROM userProfileData';
+
+    
+    $results = mysqli_query($dbConnect, $query);
+
+    if($results){
+
+        while($e=$results->fetch_assoc()){
+            $users[]=$e;
+        }
+
+        $userRecords = json_encode($users);
+        $userRecord = json_decode($userRecords, true);
+       
+        return $userRecord;
+           
+    }   else {
+
+        die('Connection Failed...');
+    }
+
+}
 
 
-
+/* Function used to authorize user access to their account */
     public static function authorizeUser($email, $password){
             
         
@@ -381,6 +510,127 @@ public static function updateUserProfile($userInput, $recordId){
         }
 
     }
+
+     /* ################################## Function used to UPDATE a user's profile ################################### */
+     public function editUser($userInput){
+
+        self::getInstance();
+        $dbConnect = self::connection();
+     /*    Example of a PREPARED Statements   */
+         /* Improved Security */
+    
+     // prepare and bind with MYSQL database
+        $fn = $userInput['fname'];
+        $sn = $userInput['sname'];
+        $email = $userInput['email'];
+        $mobile = $userInput['mobile'];
+        $pwd = $userInput['pwd_1'];
+        $salt = $userInput['salt'];    
+        $id = $userInput['id'];
+
+            $query = "UPDATE userProfileData SET f_name=?, s_name=?, ";
+            $query .= "email=?, mobile=? WHERE userId=?";
+            
+   //  $res = odbc_prepare($dbConnect, $query);
+       $res = $dbConnect->prepare($query);
+       if($res === false){
+            echo 'Server connection issue!!!';
+                exit();
+       } else {
+           // echo "SQL Query is correct";
+             //   exit();
+             $res->bind_param('sssss', $fn, $sn, $email, $mobile, $id);
+             $results = $res->execute();
+            // $results = odbc_execute($res, array($fn, $sn, $email, $mobile, $id));
+          
+             if($results){
+                  
+              $usr = array();
+              $usr = self::retrieveUserIdByEmail($email);
+      
+              $newId = $usr[0]["id"];
+      
+              $query_2 = "UPDATE userCredentials SET pwd=?, salt=? WHERE userId=?";
+      
+             // $res_2 = odbc_prepare($dbConnect, $query_2);
+             $res_2 = $dbConnect->prepare($query_2);
+             if($res_2 === false){
+                echo 'Server connection issue!!!';
+                    exit();
+             } else {
+                // echo $pwd . " " . $salt . "<br /> " . $newId;
+                  // exit();
+                $res_2->bind_param('sss', $pwd, $salt, $newId);
+                $results_2 = $res_2->execute();
+                // $results_2 = odbc_execute($res_2, array($pwd, $salt, $newId));
+          
+                return $results_2;
+          
+              } 
+             }
+           
+       }
+    
+
+
+    
+         }
+    
+
+          /* ################################## Function used to UPDATE a user's profile ################################### */
+     public function updateUser($userInput){
+
+        self::getInstance();
+        $dbConnect = self::connection();
+     /*    Example of a PREPARED Statements   */
+         /* Improved Security */
+    
+     // prepare and bind with MYSQL database
+        $fn = $userInput['fname'];
+        $sn = $userInput['sname'];
+        $email = $userInput['email'];
+        $mobile = $userInput['mobile'];
+        $memCat = $userInput['memCat'];
+        $memDes = $userInput['memDes'];
+        $status = $userInput['status'];  
+        $id = $userInput['id'];
+        //$date = "";
+      
+        if($status == 1){
+            $to = date('Y-m-d H:i:s');
+            $ny = date('Y-m-d H:i:s', strtotime($to. ' + 365 days'));
+        } else {
+            $to ="";
+            $ny = "";
+        }
+      
+
+            $query = "UPDATE userProfileData SET f_name=?, s_name=?, ";
+            $query .= "email=?, mobile=?, status=?, user_des=?, user_cat=?, admit_date=?, resign_date=? WHERE userId=?";
+            
+   //  $res = odbc_prepare($dbConnect, $query);
+       $res = $dbConnect->prepare($query);
+       if($res === false){
+            echo 'Server connection issue!!!';
+                exit();
+       } else {
+           // echo "SQL Query is correct";
+             //   exit();
+             $res->bind_param('ssssssssss', $fn, $sn, $email, $mobile, $status, $memDes, $memCat, $to, $ny, $id);
+             $results = $res->execute();
+            // $results = odbc_execute($res, array($fn, $sn, $email, $mobile, $id));
+          
+            return $results;
+           
+       }
+    
+
+
+    
+         }
+    
+
+
 
 
 }
