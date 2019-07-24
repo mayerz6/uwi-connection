@@ -13,7 +13,7 @@
   <div class="text-center">
     <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail" alt="avatar">
     <h6>Upload a different photo...</h6>
-    <input type="file" class="text-center center-block file-upload">
+  <!--  <input type="file" class="text-center center-block file-upload">  -->
   </div><hr /><br>
 
            <!--
@@ -46,7 +46,7 @@
            <!-- Content to be removed -->
            <div class="row">
       <div class="col-sm-4"><h2 class="greeting"></h2></div>
-      <div class="col-sm-2"><img style="height: 180px" title="profile image" class="img-circle img-responsive" src="<?php echo URLROOT; ?>/assets/images/pngs/Favicon/Favicon-Default_Reverse_on_Ttransparent.png"></div>
+      <div class="col-sm-2"><img style="height: 202px" title="profile image" class="img-circle img-responsive" src="<?php echo URLROOT; ?>/assets/images/pngs/Favicon/Favicon-Default_Reverse_on_Ttransparent.png"></div>
             </div>
          
             <hr>

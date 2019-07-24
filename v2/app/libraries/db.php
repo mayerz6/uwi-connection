@@ -524,8 +524,8 @@ public static function displayAllUsers(){
         $sn = $userInput['sname'];
         $email = $userInput['email'];
         $mobile = $userInput['mobile'];
-        $pwd = $userInput['pwd_1'];
-        $salt = $userInput['salt'];    
+     //   $pwd = $userInput['pwd_1'];
+     //   $salt = $userInput['salt'];    
         $id = $userInput['id'];
 
             $query = "UPDATE userProfileData SET f_name=?, s_name=?, ";
@@ -543,39 +543,38 @@ public static function displayAllUsers(){
              $results = $res->execute();
             // $results = odbc_execute($res, array($fn, $sn, $email, $mobile, $id));
           
-             if($results){
-                  
+            // if($results){
+                  /*
               $usr = array();
               $usr = self::retrieveUserIdByEmail($email);
       
               $newId = $usr[0]["id"];
       
               $query_2 = "UPDATE userCredentials SET pwd=?, salt=? WHERE userId=?";
-      
+                    */
+
              // $res_2 = odbc_prepare($dbConnect, $query_2);
+             /*
              $res_2 = $dbConnect->prepare($query_2);
              if($res_2 === false){
                 echo 'Server connection issue!!!';
                     exit();
              } else {
+                    */
                 // echo $pwd . " " . $salt . "<br /> " . $newId;
                   // exit();
-                $res_2->bind_param('sss', $pwd, $salt, $newId);
+               /* $res_2->bind_param('sss', $pwd, $salt, $newId);
                 $results_2 = $res_2->execute();
+                    */
                 // $results_2 = odbc_execute($res_2, array($pwd, $salt, $newId));
           
-                return $results_2;
+                return $results;
           
-              } 
+            //  } 
              }
            
        }
-    
 
-
-    
-         }
-    
 
           /* ################################## Function used to UPDATE a user's profile ################################### */
      public function updateUser($userInput){

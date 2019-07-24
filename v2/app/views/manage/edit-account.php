@@ -112,6 +112,7 @@
                                                         $selDef = "selected=selected";
                                                         $selSA = "";
                                                         $selSE = "";
+                                                        $selPM = "";
                                                         $selWD = "";
                                                         $selSocial = "";
                                                         $selGD = "";
@@ -130,18 +131,21 @@
                                                                 $selSE = "selected=selected";
                                                                     break;
                                                                 case 3:
+                                                                    $selPM = "selected=selected";
+                                                                        break;    
+                                                                case 4:
                                                                     $selWD = "selected=selected";
                                                                         break;
-                                                                    case 4:
+                                                                    case 5:
                                                                         $selSocial = "selected=selected";   
                                                                         break;
-                                                                    case 5:
+                                                                    case 6:
                                                                         $selGD = "selected=selected";
                                                                         break;
-                                                                    case 6:
+                                                                    case 7:
                                                                             $selO = "selected=selected";
                                                                             break;
-                                                                         
+                                                                           
                                                             }   
 
                                                                 } else {
@@ -153,13 +157,15 @@
 
                                                         ?>
                                                                                                                 
-                                                    <option value="0" <?php echo $selDef; ?>>ICT Designation</option>
+                                                                                                                <option value="0" <?php echo $selDef; ?>>ICT Designation</option>
                                                     <option value="1" <?php echo $selSA; ?>>IT Systems Admin</option>
                                                     <option value="2" <?php echo $selSE; ?>>IT Systems Security</option>
-                                                    <option value="3" <?php echo $selWD; ?>>Web/Applications Developer</option>
-                                                    <option value="4" <?php echo $selSocial; ?>>Social Media Manager</option>
-                                                    <option value="5" <?php echo $selGD; ?>>Graphic Designer</option>
-                                                    <option value="6" <?php echo $selO; ?>>Other</option>
+                                                    <option value="3" <?php echo $selPM; ?>>IT Project Manager</option>
+                                                    <option value="4" <?php echo $selWD; ?>>Web/Applications Developer</option>
+                                                    <option value="5" <?php echo $selSocial; ?>>Social Media Manager</option>
+                                                    <option value="6" <?php echo $selGD; ?>>Graphic Designer</option>
+                                                    <option value="7" <?php echo $selO; ?>>Other</option>
+                                                    
                                                 </select>
                                                 <div id="desErrorMsg"><?php echo (!empty($data['desErrorMsg'])) ? $data['desErrorMsg'] : ''; ?></div>
                                         </div>	

@@ -6,6 +6,7 @@
  
     <div class="greeting-screen"> 
         <div class="row"><?php flash('login_success'); ?></div>
+        <div class="row"><?php flash('update_success'); ?></div>
             <h2 class="greeting">Welcome to Your BIPA Profile</h2>
     </div>
 
@@ -64,9 +65,9 @@
                         </div>
                         <div class="col-md-8">
                            <ul class="list-group">
-                              <li class="list-group-item"><?php echo (!empty($data['f_name'])) ? $data['f_name'] : ''; ?> <?php echo (!empty($data['s_name'])) ? $data['s_name'] : ''; ?></li>
-                              <li class="list-group-item"><?php echo (!empty($data['memDes'])) ? $data['memDes'] : ''; ?></li>
-                              <li class="list-group-item"><?php echo (!empty($data['memCat'])) ? $data['memCat'] : ''; ?></li>
+                              <li class="list-group-item"><b style="font-weight: 1000;">Name: </b>&nbsp;<?php echo (!empty($data['f_name'])) ? $data['f_name'] : ''; ?> <?php echo (!empty($data['s_name'])) ? $data['s_name'] : ''; ?></li>
+                              <li class="list-group-item"><b style="font-weight: 1000;">ICT Designation: </b>&nbsp;<?php echo (!empty($data['memDes'])) ? $data['memDes'] : ''; ?></li>
+                              <li class="list-group-item"><b style="font-weight: 1000;">Membership Category: </b>&nbsp;<?php echo (!empty($data['memCat'])) ? $data['memCat'] : ''; ?></li>
                               <li class="list-group-item"><i class="fa fa-phone"></i> <?php echo (!empty($data['mobile'])) ? $data['mobile'] : ''; ?> </li>
                               <li class="list-group-item"><i class="fa fa-envelope"></i> <?php echo (!empty($data['email'])) ? $data['email'] : ''; ?></li>
                            </ul>
@@ -149,38 +150,50 @@
 
                <div class="bs-callout bs-callout-danger">
                   <h4>Membership Term</h4>
-                  <table style="width=100%; table-layout: fixed;" class="table table-striped table-responsive ">
-                     <thead>
-                        <tr>
-                           <th>Date of Application</th>
-                           <th>Date of Admission</th>
-                           <th>Date of Renewal</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        <tr>
-                           <?php  
+                  <div class="table-responsive-lg">
+                  
+                     <table class="table table-striped table-responsive ">
+                        <thead class="thead-dark">
+                           <tr>
+                              <th scope="col">Membership Status</th>
+                              <th scope="col">Date of Application</th>
+                              <th scope="col">Date of Admission</th>
+                              <th scope="col">Date of Renewal</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <tr>
+                              <?php  
+   
+                                 if($data['app_date'] <= $data['admit']){
+                                    $admit = $data['admit'];
+                                    $res = $data['resign'];
+                                 } else {
+                                    $admit = "Pending";     
+                                    $res ="";
+                                                          }
 
-                              if($data['app_date'] <= $data['admit']){
-                                 $admit = $data['admit'];
-                                 $res = $data['resign'];
+                              if($data['status'] == '1'){
+                                    $statMsg = "<div style='display: inline-block; font-weight: 600;' class='text-success'>Active</div>";
                               } else {
-                                 $admit = "Pending";     
-                                 $res ="";
-                                                       }
+                                 $statMsg = "<div style='display: inline-block; font-weight: 600;' class='text-muted'><b>Inactive</b></div>";
+                              }
+   
+                              ?>
+                              <td><?php echo $statMsg; ?></td>
+                              <td><b><?php echo (!empty($data['app_date'])) ? $data['app_date'] : ''; ?></b></td>
+                              <td><b><?php echo (!empty($admit)) ? $admit : ''; ?></b></td>
+                              <td><b><?php echo (!empty($res)) ? $res : ''; ?></b></td>
+                           </tr>
+                         <!--  <tr>
+                              <td>BSc. in Computer Science and Engineering</td>
+                              <td>2011</td>
+                              <td> 3.25 </td>
+                           </tr>   -->
+                        </tbody>
+                     </table>
 
-                           ?>
-                           <td><b><?php echo (!empty($data['app_date'])) ? $data['app_date'] : ''; ?></b></td>
-                           <td><b><?php echo (!empty($admit)) ? $admit : ''; ?></b></td>
-                           <td><b><?php  echo (!empty($res)) ? $res : ''; ?></b></td>
-                        </tr>
-                      <!--  <tr>
-                           <td>BSc. in Computer Science and Engineering</td>
-                           <td>2011</td>
-                           <td> 3.25 </td>
-                        </tr>   -->
-                     </tbody>
-                  </table>
+                           </div>
                </div>
 
                <div class="bs-callout bs-callout-danger">

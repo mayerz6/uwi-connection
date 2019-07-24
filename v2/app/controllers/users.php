@@ -45,14 +45,20 @@ class Users extends Controller{
                     $data['memDes'] = "IT Systems Security";
                         break;
                 case 3:
-                    $data['memDes'] = "Web/Applications Developer";
+                    $data['memDes'] = "IT Project Manager";
                         break;
                 case 4:
-                    $data['memDes'] = "Social Media Manager";
+                    $data['memDes'] = "Web/Applications Developer";
                         break;
                 case 5:
+                    $data['memDes'] = "Social Media Manager";
+                        break;
+                case 6:
                     $data['memDes'] = "Graphic Designer";
-                        break;                             
+                        break;                    
+                case 7:
+                    $data['memDes'] = "Modern Designation";
+                            break;                           
 
             }
     
@@ -97,8 +103,7 @@ class Users extends Controller{
             extract($_POST);
             /* Validation of user input can take place here. */
 
-                     /* Validation of user input can take place here. */
-
+            /* Validation of user input can take place here. */
             $firstname = trim($firstname);
             $surname = trim($surname);
             $mobile = trim($mobile);
@@ -115,12 +120,12 @@ class Users extends Controller{
                 'email' => $email,
                 'emailError' => '',
                 'mobile' => $mobile,
-                'mobileError' => '',
-                'pwd_1' => $pwd_1,
-                'pwd_1Error' => '',
-                'pwd_2' => $pwd_2,
-                'pwd_2Error' => '',  
-                'salt' => ''
+                'mobileError' => ''
+            //    'pwd_1' => $pwd_1,
+            //    'pwd_1Error' => '',
+            //    'pwd_2' => $pwd_2,
+             //   'pwd_2Error' => '',  
+             //   'salt' => ''
             ];
 
               /* Validation of the user's input for their FIRSTNAME. */
@@ -140,7 +145,7 @@ class Users extends Controller{
             $data['mobileError'] = 'Blank contact numbers aren\'t allowed...';
         }
       
-
+        /*
         if(empty($data["pwd_1"])){
             $data['pwd_1Error'] = 'Blank user passwords aren\'t allowed...';     
         } else {
@@ -150,19 +155,22 @@ class Users extends Controller{
                 $data['pwd_1Error'] = 'Your confirmation password doesn\'t match...';
             }
         }
+        */
 
          /* Validation of the user's input for their FIRSTNAME. */
-         if(empty($data["pwd_2"])){
+      /*   if(empty($data["pwd_2"])){
             $data['pwd_2Error'] = '...Blank confirmation passwords aren\'t allowed';
         } else {
                 if($data["pwd_1"] != $data["pwd_2"]){
                     $data['pwd_2Error'] = 'Confirmation password doesn\'t match...';
                 }
         }
+        */
 
-
-        if(empty($data["fnameError"]) && empty($data["snameError"]) && empty($data["emailError"]) && empty($data["mobileError"]) && empty($data["pwd_1Error"]) && empty($data["pwd_2Error"])){
+        if(empty($data["fnameError"]) && empty($data["snameError"]) && empty($data["emailError"]) && empty($data["mobileError"])/* && empty($data["pwd_1Error"]) && empty($data["pwd_2Error"]) */ ){
         
+            /* 
+
             $userEncrypt = new encryption;
             $pwdEncrypt = $userEncrypt->hashPwd($data["pwd_1"]);    
             $usrSalt = $userEncrypt->generateSalt();
@@ -172,6 +180,8 @@ class Users extends Controller{
 
                 $data["pwd_1"] = $usrPwdHash;
                 $data["salt"] = $usrSalt;
+                
+        */
 
                  //   print_r($data);
                    //     exit();
@@ -179,7 +189,7 @@ class Users extends Controller{
                 $auth = $this->userModel->editRecord($data);
 
                 if($auth){
-            flash('register_success', 'You account was updated successfully!');
+            flash('update_success', 'You account was updated successfully!');
                  header('Location: '. URLROOT . '/users/dashboard');
                  // $this->view('users/login');  
                 } else {
